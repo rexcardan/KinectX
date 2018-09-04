@@ -1,0 +1,34 @@
+﻿using NLog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.ServiceModel.Discovery;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KinectX.Network
+{
+    public class IKxServerFinder
+    {
+        private static ILogger _logger = LogManager.GetCurrentClassLogger();
+
+        public static List<KxClient> FindServers()
+        {
+            List<KxClient> clients = new List<KxClient>();
+            var discoveryClient = new DiscoveryClient(new UdpDiscoveryEndpoint());
+            var findCriteria = new FindCriteria();
+            findCriteria.ContractTypeNames.Add(new System.Xml.XmlQualifiedName("IKxServer", "http://cardankx.org/"));
+            findCriteria.Duration = new TimeSpan(0, 0, 2);
+            _logger.Info("Finding Kinect servers...");
+            var services = discoveryClient.Find(findCriteria);
+            discoveryClient.Close();
+            Console.WriteLine("Found {0} servers", services.Endpoints.Count);
+            foreach (var endPoint in services.Endpoints)
+            {
+                Console.WriteLine(endPoint.Address);
+                clients.Add(KxClient.GenerateClient(endPoint.Address));
+            }
+            return clients;
+        }
+    }
+}
