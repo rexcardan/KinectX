@@ -32,6 +32,9 @@ namespace KinectX.Network
         [System.ServiceModel.OperationContractAttribute(Action = "http://cardankx.org/IKxServer/LatestJPEGImage", ReplyAction = "http://cardankx.org/IKxServer/LatestJPEGImageResponse")]
         byte[] LatestJPEGImage();
 
+        [System.ServiceModel.OperationContractAttribute(Action = "http://cardankx.org/IKxServer/LatestAudio", ReplyAction = "http://cardankx.org/IKxServer/LatestAudio")]
+        byte[] LatestAudio();
+
         [System.ServiceModel.OperationContractAttribute(Action = "http://cardankx.org/IKxServer/LatestJPEGImage", ReplyAction = "http://cardankx.org/IKxServer/LatestJPEGImageResponse")]
         System.Threading.Tasks.Task<byte[]> LatestJPEGImageAsync();
 
