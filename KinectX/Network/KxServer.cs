@@ -1,15 +1,20 @@
 ﻿using KinectX.Meta;
+using KinectX.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
+using System.ServiceModel.Discovery;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace KinectX.Network
 {
-    public class KxServer : IKxServer
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
+    [ServiceContract]
+    public class KxServer
     {
         private byte[] depthByteBuffer = new byte[KinectSettings.DepthPixelCount * 2];
         private byte[] yuvByteBuffer = new byte[KinectSettings.ColorPixelCount * 2];
@@ -53,26 +58,21 @@ namespace KinectX.Network
                 KxBuffer.instance.audioFrameQueues.Remove(this.audioFrameQueue);
         }
 
+        [OperationContract]
         public long LastColorExposureTimeTicks()
         {
             return KxBuffer.instance.lastColorExposureTimeTicks;
         }
 
-        public async Task<long> LastColorExposureTimeTicksAsync()
-        {
-            return await Task.Run(() => { return KxBuffer.instance.lastColorExposureTimeTicks; });
-        }
 
+        [OperationContract]
         public float LastColorGain()
         {
             return KxBuffer.instance.lastColorGain;
         }
 
-        public async Task<float> LastColorGainAsync()
-        {
-            return await Task.Run(() => { return KxBuffer.instance.lastColorGain; });
-        }
 
+        [OperationContract]
         public byte[] LatestDepthImage()
         {
             this.depthFrameReady.WaitOne();
@@ -81,21 +81,15 @@ namespace KinectX.Network
             return this.depthByteBuffer;
         }
 
-        public Task<byte[]> LatestDepthImageAsync()
-        {
-            throw new NotImplementedException();
-        }
 
+        [OperationContract]
         public byte[] LatestJPEGImage()
         {
             throw new NotImplementedException();
         }
 
-        public Task<byte[]> LatestJPEGImageAsync()
-        {
-            throw new NotImplementedException();
-        }
 
+        [OperationContract]
         public byte[] LatestRGBImage()
         {
             this.rgbFrameReady.WaitOne();
@@ -104,21 +98,15 @@ namespace KinectX.Network
             return this.rgbByteBuffer;
         }
 
-        public Task<byte[]> LatestRGBImageAsync()
-        {
-            throw new NotImplementedException();
-        }
 
+        [OperationContract]
         public byte[] LatestYUVImage()
         {
             throw new NotImplementedException();
         }
 
-        public Task<byte[]> LatestYUVImageAsync()
-        {
-            throw new NotImplementedException();
-        }
 
+        [OperationContract]
         public byte[] LatestAudio()
         {
             this.audioFrameReady.WaitOne();
@@ -130,6 +118,17 @@ namespace KinectX.Network
                     Array.Copy((Array)this.audioFrameQueue.Dequeue(), 0, (Array)numArray, 1024 * index, 1024);
                 return numArray;
             }
+        }
+
+        public static void Start()
+        {
+            Console.WriteLine("Starting Kinect server...");
+            KxBuffer kinectServerHandler = new KxBuffer();
+            ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
+            serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
+            serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
+            serviceHost.Open();
+            Console.ReadLine();
         }
     }
 }

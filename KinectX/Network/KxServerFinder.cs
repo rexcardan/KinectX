@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KinectX.Network
 {
-    public class IKxServerFinder
+    public class KxServerFinder
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
@@ -16,8 +16,7 @@ namespace KinectX.Network
         {
             List<KxClient> clients = new List<KxClient>();
             var discoveryClient = new DiscoveryClient(new UdpDiscoveryEndpoint());
-            var findCriteria = new FindCriteria();
-            findCriteria.ContractTypeNames.Add(new System.Xml.XmlQualifiedName("IKxServer", "http://cardankx.org/"));
+            var findCriteria = new FindCriteria(typeof(KxServer));
             findCriteria.Duration = new TimeSpan(0, 0, 2);
             _logger.Info("Finding Kinect servers...");
             var services = discoveryClient.Find(findCriteria);
@@ -26,7 +25,7 @@ namespace KinectX.Network
             foreach (var endPoint in services.Endpoints)
             {
                 Console.WriteLine(endPoint.Address);
-                clients.Add(KxClient.GenerateClient(endPoint.Address));
+               clients.Add(KxClient.GenerateClient(endPoint.Address));
             }
             return clients;
         }
