@@ -1,5 +1,6 @@
 ﻿using KinectX.Meta;
 using KinectX.Network;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,9 @@ namespace KinectX.Network
     [ServiceContract]
     public class KxServer
     {
-        private byte[] depthByteBuffer = new byte[KinectSettings.DepthPixelCount * 2];
+        private static ILogger _logger = LogManager.GetCurrentClassLogger();
+
+        private ushort[] depthShortBuffer = new ushort[KinectSettings.DepthPixelCount];
         private byte[] yuvByteBuffer = new byte[KinectSettings.ColorPixelCount * 2];
         private byte[] rgbByteBuffer = new byte[KinectSettings.ColorPixelCount * 4];
         private AutoResetEvent depthFrameReady = new AutoResetEvent(false);
@@ -30,7 +33,7 @@ namespace KinectX.Network
 
         public KxServer()
         {
-            _buffer = new KxBuffer();
+            _logger.Info("Constructing server...");
             lock (KxBuffer.instance.depthFrameReady)
                 KxBuffer.instance.depthFrameReady.Add(this.depthFrameReady);
             lock (KxBuffer.instance.yuvFrameReady)
@@ -46,6 +49,7 @@ namespace KinectX.Network
 
         private void Channel_Closed(object sender, EventArgs e)
         {
+            _logger.Info("Closing channel...");
             lock (KxBuffer.instance.depthFrameReady)
                 KxBuffer.instance.depthFrameReady.Remove(this.depthFrameReady);
             lock (KxBuffer.instance.yuvFrameReady)
@@ -73,12 +77,21 @@ namespace KinectX.Network
 
 
         [OperationContract]
-        public byte[] LatestDepthImage()
+        public ushort[] LatestDepthImage()
         {
-            this.depthFrameReady.WaitOne();
-            lock (KxBuffer.instance.depthShortBuffer)
-                Buffer.BlockCopy((Array)KxBuffer.instance.depthShortBuffer, 0, (Array)this.depthByteBuffer, 0, KinectSettings.DepthPixelCount * 2);
-            return this.depthByteBuffer;
+            _logger.Info("Getting latest depth image...");
+            try
+            {
+                this.depthFrameReady.WaitOne();
+                lock (KxBuffer.instance.depthShortBuffer)
+                    Buffer.BlockCopy((Array)KxBuffer.instance.depthShortBuffer, 0, (Array)this.depthShortBuffer, 0, KinectSettings.DepthPixelCount * 2);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+
+            return this.depthShortBuffer;
         }
 
 
@@ -122,12 +135,13 @@ namespace KinectX.Network
 
         public static void Start()
         {
-            Console.WriteLine("Starting Kinect server...");
-            KxBuffer kinectServerHandler = new KxBuffer();
+            _logger.Info("Starting Kinect service...");
+            new KxBuffer();
             ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
             serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
             serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
             serviceHost.Open();
+            _logger.Info("Kinect listener service!");
             Console.ReadLine();
         }
     }

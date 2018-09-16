@@ -16,7 +16,7 @@ namespace KinectX.Network.Interfaces
     {
 
         [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LatestDepthImage", ReplyAction = "http://tempuri.org/KxServer/LatestDepthImageResponse")]
-        byte[] LatestDepthImage();
+        ushort[] LatestDepthImage();
 
         [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LatestYUVImage", ReplyAction = "http://tempuri.org/KxServer/LatestYUVImageResponse")]
         byte[] LatestYUVImage();

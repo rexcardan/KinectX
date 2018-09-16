@@ -36,7 +36,7 @@ namespace KinectX.Network
         {
         }
 
-        public byte[] LatestDepthImage()
+        public ushort[] LatestDepthImage()
         {
             return base.Channel.LatestDepthImage();
         }

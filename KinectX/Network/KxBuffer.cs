@@ -52,6 +52,7 @@ namespace KinectX.Network
 
         private void CoordinateMapper_CoordinateMappingChanged(object sender, CoordinateMappingChangedEventArgs e)
         {
+            _logger.Info(string.Format("Coordinate mapper changed. Configuring events...", this.kinectSensor.UniqueKinectId));
             this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
             this.depthFrameReader.FrameArrived += DepthFrameReader_FrameArrived;
             this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
