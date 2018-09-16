@@ -19,9 +19,9 @@ namespace KinectX.Network
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        private ushort[] depthShortBuffer = new ushort[KinectSettings.DepthPixelCount];
-        private byte[] yuvByteBuffer = new byte[KinectSettings.ColorPixelCount * 2];
-        private byte[] rgbByteBuffer = new byte[KinectSettings.ColorPixelCount * 4];
+        private ushort[] depthShortBuffer = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
+        private byte[] yuvByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 2];
+        private byte[] rgbByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 4];
         private AutoResetEvent depthFrameReady = new AutoResetEvent(false);
         private AutoResetEvent yuvFrameReady = new AutoResetEvent(false);
         private AutoResetEvent rgbFrameReady = new AutoResetEvent(false);
@@ -29,7 +29,6 @@ namespace KinectX.Network
         private AutoResetEvent audioFrameReady = new AutoResetEvent(false);
         private Queue<byte[]> audioFrameQueue = new Queue<byte[]>();
 
-        private KxBuffer _buffer;
 
         public KxServer()
         {
@@ -84,7 +83,7 @@ namespace KinectX.Network
             {
                 this.depthFrameReady.WaitOne();
                 lock (KxBuffer.instance.depthShortBuffer)
-                    Buffer.BlockCopy((Array)KxBuffer.instance.depthShortBuffer, 0, (Array)this.depthShortBuffer, 0, KinectSettings.DepthPixelCount * 2);
+                    Buffer.BlockCopy((Array)KxBuffer.instance.depthShortBuffer, 0, (Array)this.depthShortBuffer, 0, KinectSettings.DEPTH_PIXEL_COUNT * 2);
             }
             catch (Exception e)
             {
@@ -107,7 +106,7 @@ namespace KinectX.Network
         {
             this.rgbFrameReady.WaitOne();
             lock (KxBuffer.instance.rgbByteBuffer)
-                Buffer.BlockCopy((Array)KxBuffer.instance.rgbByteBuffer, 0, (Array)this.rgbByteBuffer, 0, KinectSettings.ColorPixelCount * 4);
+                Buffer.BlockCopy((Array)KxBuffer.instance.rgbByteBuffer, 0, (Array)this.rgbByteBuffer, 0, KinectSettings.COLOR_PIXEL_COUNT * 4);
             return this.rgbByteBuffer;
         }
 

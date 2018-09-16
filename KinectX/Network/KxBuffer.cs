@@ -18,12 +18,12 @@ namespace KinectX.Network
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public ushort[] depthShortBuffer = new ushort[KinectSettings.DepthPixelCount];
-        public byte[] depthByteBuffer = new byte[KinectSettings.DepthPixelCount * 2];
+        public ushort[] depthShortBuffer = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
+        public byte[] depthByteBuffer = new byte[KinectSettings.DEPTH_PIXEL_COUNT * 2];
         public List<AutoResetEvent> depthFrameReady = new List<AutoResetEvent>();
-        public byte[] yuvByteBuffer = new byte[KinectSettings.ColorPixelCount * 2];
+        public byte[] yuvByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 2];
         public List<AutoResetEvent> yuvFrameReady = new List<AutoResetEvent>();
-        public byte[] rgbByteBuffer = new byte[KinectSettings.ColorPixelCount * 4];
+        public byte[] rgbByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 4];
         public List<AutoResetEvent> rgbFrameReady = new List<AutoResetEvent>();
         public int nJpegBytes = 0;
         public ManualResetEvent kinect2CalibrationReady = new ManualResetEvent(false);
