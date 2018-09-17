@@ -1,6 +1,6 @@
-﻿using Kinect.Voxels.Extensions;
-using Kinect.Voxels.Help;
-using Kinect.Voxels.Mathematics;
+﻿using KinectX.Extensions;
+using KinectX.Help;
+using KinectX.Mathematics;
 using Microsoft.Kinect;
 using OpenCvSharp;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Registration
+namespace KinectX.Registration
 {
     /// <summary>
     /// This class holds the relationship between codes and the 3D positions of its corners. It assumes all visual codes

@@ -1,4 +1,5 @@
-﻿using KinectX.Meta;
+﻿using KinectX.Data;
+using KinectX.Meta;
 using KinectX.Network;
 using NLog;
 using System;
@@ -135,7 +136,7 @@ namespace KinectX.Network
         public static void Start()
         {
             _logger.Info("Starting Kinect service...");
-            new KxBuffer();
+            KxBuffer.StartBuffer();
             ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
             serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
             serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());

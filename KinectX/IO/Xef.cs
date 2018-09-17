@@ -1,4 +1,4 @@
-﻿using Kinect.Voxels.Processors;
+﻿using KinectX.Processors;
 using KinectX.Meta;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Tools;
@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Kinect.Voxels.Processors.DepthProcessor;
+using static KinectX.Processors.DepthProcessor;
 
-namespace Kinect.Voxels.Help
+namespace KinectX.Help
 {
     public class Xef
     {

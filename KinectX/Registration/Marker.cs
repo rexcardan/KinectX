@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Registration
+namespace KinectX.Registration
 {
     public class Marker
     {

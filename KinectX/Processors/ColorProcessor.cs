@@ -1,4 +1,4 @@
-﻿using Kinect.Voxels.Help;
+﻿using KinectX.Help;
 using KinectX.Meta;
 using Microsoft.Kinect.Tools;
 using NLog;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Processors
+namespace KinectX.Processors
 {
     public class ColorProcessor
     {

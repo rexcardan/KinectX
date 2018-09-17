@@ -1,4 +1,4 @@
-﻿using Kinect.Voxels.Help;
+﻿using KinectX.Help;
 using KinectX.Meta;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Tools;
@@ -7,7 +7,7 @@ using OpenCvSharp;
 using System;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Processors
+namespace KinectX.Processors
 {
     public class DepthProcessor
     {

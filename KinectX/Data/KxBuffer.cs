@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace KinectX.Network
+namespace KinectX.Data
 {
     /// <summary>
     /// Stores the latest images and data from the connected Kinect
@@ -18,18 +18,26 @@ namespace KinectX.Network
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
+        public static void StartBuffer()
+        {
+            if(KxBuffer.instance == null)
+            {
+                KxBuffer.instance = new KxBuffer();            }
+        }
+
         public ushort[] depthShortBuffer = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
+
         public byte[] depthByteBuffer = new byte[KinectSettings.DEPTH_PIXEL_COUNT * 2];
-        public List<AutoResetEvent> depthFrameReady = new List<AutoResetEvent>();
+        public List<EventWaitHandle> depthFrameReady = new List<EventWaitHandle>();
         public byte[] yuvByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 2];
-        public List<AutoResetEvent> yuvFrameReady = new List<AutoResetEvent>();
+        public List<EventWaitHandle> yuvFrameReady = new List<EventWaitHandle>();
         public byte[] rgbByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 4];
-        public List<AutoResetEvent> rgbFrameReady = new List<AutoResetEvent>();
+        public List<EventWaitHandle> rgbFrameReady = new List<EventWaitHandle>();
         public int nJpegBytes = 0;
-        public ManualResetEvent kinect2CalibrationReady = new ManualResetEvent(false);
+        public ManualResetEvent coordinateMapperReady = new ManualResetEvent(false);
         private Stopwatch stopWatch = new Stopwatch();
         private Body[] bodies = (Body[])null;
-        public List<AutoResetEvent> audioFrameReady = new List<AutoResetEvent>();
+        public List<EventWaitHandle> audioFrameReady = new List<EventWaitHandle>();
         public List<Queue<byte[]>> audioFrameQueues = new List<Queue<byte[]>>();
         public static KxBuffer instance;
         private KinectSensor kinectSensor;
@@ -39,14 +47,14 @@ namespace KinectX.Network
         public long lastColorExposureTimeTicks;
         private BodyFrameReader bodyFrameReader;
         private AudioBeamFrameReader audioBeamFrameReader;
+        public CoordinateMapper coordinateMapper;
 
-        public KxBuffer()
+        private KxBuffer()
         {
-            KxBuffer.instance = this;
             this.kinectSensor = KinectSensor.GetDefault();
             this.kinectSensor.CoordinateMapper.CoordinateMappingChanged += CoordinateMapper_CoordinateMappingChanged;
             this.kinectSensor.Open();
-            
+
             _logger.Info(string.Format("Sensor {0} open and streaming...", this.kinectSensor.UniqueKinectId));
         }
 
@@ -63,6 +71,8 @@ namespace KinectX.Network
             this.audioBeamFrameReader.FrameArrived += AudioBeamFrameReader_FrameArrived;
             this.audioBeamFrameReader.AudioSource.AudioBeams[0].AudioBeamMode = AudioBeamMode.Automatic;
             this.audioBeamFrameReader.AudioSource.AudioBeams[0].BeamAngle=0.0f;
+            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
+            coordinateMapperReady.Set();
         }
 
         private void AudioBeamFrameReader_FrameArrived(object sender, AudioBeamFrameArrivedEventArgs e)
@@ -133,13 +143,16 @@ namespace KinectX.Network
                                 autoResetEvent.Set();
                     }
 
-                    if ((rgbFrameReady.Count > 0))
+                    if (rgbFrameReady.Any(ready=>!ready.WaitOne(0)))
                     {
                         lock (rgbByteBuffer)
                             colorFrame.CopyConvertedFrameDataToArray(rgbByteBuffer, ColorImageFormat.Bgra);
                         lock (rgbFrameReady)
                             foreach (var autoResetEvent in rgbFrameReady)
+                            {
                                 autoResetEvent.Set();
+                            }
+
                     }
                 }
             }
@@ -152,7 +165,7 @@ namespace KinectX.Network
             {
                 using (depthFrame)
                 {
-                    if (depthFrameReady.Count > 0)
+                    if (depthFrameReady.Any(ready => !ready.WaitOne(0)))
                     {
                         lock (depthShortBuffer)
                             depthFrame.CopyFrameDataToArray(depthShortBuffer);

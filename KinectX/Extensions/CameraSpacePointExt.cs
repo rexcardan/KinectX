@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Extensions
+namespace KinectX.Extensions
 {
     public static class CameraSpacePointExt
     {

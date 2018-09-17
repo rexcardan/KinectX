@@ -1,4 +1,4 @@
-﻿using Kinect.Voxels.Help;
+﻿using KinectX.Help;
 using KinectX.Meta;
 using OpenCvSharp;
 using OpenCvSharp.Aruco;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Registration
+namespace KinectX.Registration
 {
     public class Vision
     {

@@ -2,8 +2,6 @@
 using KinectX.Fusion;
 using KinectX.Fusion.Components;
 using KinectX.Fusion.Helpers;
-using KinectX.Network;
-using Microsoft.Kinect.Fusion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace KinectXConsole
 {
-    class Program
+    public class KxFusionNoRegistrationExample
     {
-        static void Main(string[] args)
+        public static void Run(string[] args)
         {
             var fusion = new Engine();
             FusionVolume.VoxelsPerMeter = 256;

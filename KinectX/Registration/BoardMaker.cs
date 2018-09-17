@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kinect.Voxels.Registration
+namespace KinectX.Registration
 {
     /// <summary>
     /// class which builds out images to build a 3D registration cube of ARUCO markers

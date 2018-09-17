@@ -1,6 +1,5 @@
-﻿using Kinect.Voxels.Help;
-using Kinect.Voxels.Mathematics;
-using Kinect.Voxels.Extensions;
+﻿using KinectX.Mathematics;
+using KinectX.Extensions;
 using Microsoft.Kinect;
 using OpenCvSharp;
 using System;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 using NLog;
 using KinectX.Meta;
 
-namespace Kinect.Voxels.Registration
+namespace KinectX.Registration
 {
     public class PoseFinder
     {

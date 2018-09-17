@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Extensions
+namespace KinectX.Extensions
 {
     public static class MatExt
     {
@@ -29,6 +29,18 @@ namespace Kinect.Voxels.Extensions
                );
 
             return new Point3f(homogenous.Item0, homogenous.Item1, homogenous.Item2);
+        }
+
+        public static void Show(this Mat mat)
+        {
+            Cv2.ImShow("Mat", mat);
+            Cv2.WaitKey();
+        }
+
+        public static void ShowNoWait(this Mat mat)
+        {
+            Cv2.ImShow("Mat", mat);
+            Cv2.WaitKey(10);
         }
     }
 }

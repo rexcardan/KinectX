@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kinect.Voxels.Mathematics
+namespace KinectX.Mathematics
 {
     public class Transform
     {
