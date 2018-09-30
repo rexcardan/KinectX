@@ -2,10 +2,8 @@
 using Microsoft.Kinect;
 using Microsoft.Kinect.Fusion;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
 
 namespace KinectX.Processors
 {
@@ -51,7 +49,6 @@ namespace KinectX.Processors
         private int depthVisibilityTestMapWidth;
         private int depthVisibilityTestMapHeight;
         private bool mirrorDepth;
-
 
         public FusionColorProcessor()
         {

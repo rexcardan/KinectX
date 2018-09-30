@@ -1,4 +1,4 @@
-﻿using KinectX.Data;
+﻿using KinectX.Data.Listeners;
 using KinectX.Fusion.Components;
 using KinectX.Fusion.Helpers;
 using KinectX.Processors;
@@ -41,17 +41,19 @@ namespace KinectX.Fusion
         public FusionColorProcessor ColorProcessor { get; private set; }
         public CubeDrawer CubeDrawer { get; set; }
 
-        public FrameListener StartFrameListener<T>() where T : FrameListener
+        public T StartFrameListener<T>() where T : FrameListener
         {
             FrameListener = Activator.CreateInstance<T>();
             FrameListener.Initialize();
-            return FrameListener;
+            return (T)FrameListener;
         }
 
         public FusionVolume FusionVolume { get; private set; }
         public RenderController RenderController { get; private set; }
         public FrameListener FrameListener { get; set; }
         public Processors.FusionDepthProcessor DepthProcessor { get; private set; }
+
+
         public Resampler Resampler { get; private set; }
         public PointCloudProcessor PointCloudCalculator { get; private set; }
         public CameraTracker CameraTracker { get; private set; }

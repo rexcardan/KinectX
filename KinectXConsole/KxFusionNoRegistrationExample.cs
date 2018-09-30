@@ -1,4 +1,5 @@
 ﻿using KinectX.Data;
+using KinectX.Data.Listeners;
 using KinectX.Fusion;
 using KinectX.Fusion.Components;
 using KinectX.Fusion.Helpers;

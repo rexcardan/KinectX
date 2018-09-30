@@ -11,8 +11,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static KinectX.Processors.DepthProcessor;
+using System.IO;
+using KinectX.Data;
 
-namespace KinectX.Help
+namespace KinectX.IO
 {
     public class Xef
     {
@@ -22,8 +24,29 @@ namespace KinectX.Help
 
         public Xef(string path)
         {
-            _path = path;
+            if (!File.Exists(path))
+            {
+                throw new Exception("File does not exist!");
+            }
+            _path = Path.GetFullPath(path);
+            NumOfDepthFrames = GetNumOfDepthFrames();
+            NumOfColorFrames = GetNumOfColorFrames();
         }
+
+        public CvColor LoadCvColorFrame(int desiredFrameNum)
+        {
+            var color = this.LoadColorFrame(desiredFrameNum);
+            return new CvColor(color);
+        }
+
+        public CvDepth LoadCvDepthFrame(int desiredFrameNum)
+        {
+            var depth = this.LoadDepthFrame(desiredFrameNum);
+            return new CvDepth(depth);
+        }
+
+        public int NumOfDepthFrames { get; private set; }
+        public int NumOfColorFrames { get; private set; }
 
         public ColorProcessor LoadColorFrame(int desiredFrameNum, bool includeAlpha = false)
         {
@@ -51,6 +74,7 @@ namespace KinectX.Help
 
         public CoordinateMapper GetEmbeddedCoordinateMapper()
         {
+            _logger.Info("Loading coordinate mapper from XEF file...");
             CoordinateMapper cm;
             using (var client = KStudio.CreateClient())
             {
@@ -69,6 +93,7 @@ namespace KinectX.Help
                     playBack.Stop();
                 }
             }
+            _logger.Info("Coordinate mapper loaded from XEF file!");
             return cm;
         }
 
@@ -118,6 +143,107 @@ namespace KinectX.Help
                 frame.CopyFrameDataToArray(_pixels);
             }
         }
+
+        public int GetNumOfDepthFrames()
+        {
+            _logger.Info("Calculating number of depth frames...");
+            return GetNumOfFrames(KStudioEventStreamDataTypeIds.Depth);
+        }
+
+        public int GetNumOfColorFrames()
+        {
+            _logger.Info("Calculating number of color frames...");
+            return GetNumOfFrames(KStudioEventStreamDataTypeIds.UncompressedColor);
+        }
+
+        public int GetNumOfFrames(Guid typeId)
+        {
+            int numFrames = 0;
+            using (KStudioClient client = KStudio.CreateClient(KStudioClientFlags.ProcessNotifications))
+            {
+                ManualResetEvent mr = new ManualResetEvent(false);
+                KStudioEventStreamSelectorCollection selEvents = new KStudioEventStreamSelectorCollection();
+                selEvents.Add(typeId);
+                //This is where you will intercept steps in the XEF file
+                using (var reader = client.CreateEventReader(_path, selEvents))
+                {
+                    KStudioEvent ev;
+                    reader.GetNextEvent();
+                    while ((ev = reader.GetNextEvent()) != null)
+                    {
+                        numFrames++;
+                    }
+                }
+            }
+            return numFrames;
+        }
+
+        public T[] LoadFrame<T>(int desiredFrameNum, Guid eventType, Func<KStudioEvent, T[]> pixelCopyOperation)
+        {
+            T[] pixels = null;
+
+            using (KStudioClient client = KStudio.CreateClient(KStudioClientFlags.ProcessNotifications))
+            {
+                KStudioEventStreamSelectorCollection selEvents = new KStudioEventStreamSelectorCollection();
+                selEvents.Add(eventType);
+
+                //This is where you will intercept steps in the XEF file
+                using (var reader = client.CreateEventReader(_path, selEvents))
+                {
+                    KStudioEvent ev;
+                    reader.GetNextEvent();
+                    int frameNum = 0;
+                    while ((ev = reader.GetNextEvent()) != null)
+                    {
+                        if (frameNum == desiredFrameNum)
+                        {
+                            pixels = pixelCopyOperation(ev);
+                            break;
+                        }
+                        frameNum++;
+                    }
+                }
+            }
+            return pixels;
+        }
+
+        public unsafe ushort[] LoadDepthFrame(int desiredFrame)
+        {
+            _logger.Info($"Loading depth frame {desiredFrame}...");
+            var copyOperation = new Func<KStudioEvent, ushort[]>(ev =>
+            {
+                ushort[] pixels = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
+                fixed (ushort* p = pixels)
+                {
+                    IntPtr ptr = (IntPtr)p;
+                    ev.CopyEventDataToBuffer((uint)pixels.Length * sizeof(ushort), ptr);
+                }
+                return pixels;
+            });
+            var frame = LoadFrame(desiredFrame, KStudioEventStreamDataTypeIds.Depth, copyOperation);
+            _logger.Info($"Loaded depth frame {desiredFrame}!");
+            return frame;
+        }
+
+        public unsafe byte[] LoadColorFrame(int desiredFrame)
+        {
+            _logger.Info($"Loading color frame {desiredFrame}...");
+            var copyOperation = new Func<KStudioEvent, byte[]>(ev =>
+            {
+                byte[] pixels = new byte[KinectSettings.COLOR_PIXEL_COUNT*2];
+                fixed (byte* p = pixels)
+                {
+                    IntPtr ptr = (IntPtr)p;
+                    ev.CopyEventDataToBuffer((uint)pixels.Length * sizeof(int), ptr);
+                }
+                
+                return pixels;
+            });
+            var frame = LoadFrame(desiredFrame, KStudioEventStreamDataTypeIds.UncompressedColor, copyOperation);
+            _logger.Info($"Loaded color frame {desiredFrame}!");
+            return frame;
+        }
+
 
         public DepthProcessor LoadDepthFrame(int desiredFrameNum, int numberOfDepthSmooths)
         {

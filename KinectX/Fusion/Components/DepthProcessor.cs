@@ -39,6 +39,7 @@ namespace KinectX.Fusion.Components
         /// Maximum residual alignment energy where tracking is still considered successful
         /// </summary>
         public float SmoothingDistanceThreshold { get; set; } = 0.04f; // 4cm, could use up to around 0.1f;
+        public static bool DoSmoothDepth { get; set; } = true;
 
         public FusionFloatImageFrame DepthToDepthFloatFrame(ushort[] depthPixels)
         {

@@ -1,9 +1,12 @@
 ﻿using Microsoft.Kinect.Fusion;
+using NLog;
 
 namespace KinectX.Fusion.Components
 {
     public class DataIntegrator
     {
+        private ILogger _logger = LogManager.GetCurrentClassLogger();
+
         private Engine engine;
 
         public bool IntegrationPaused { get; set; }
@@ -46,8 +49,14 @@ namespace KinectX.Fusion.Components
                 var fdl = engine.FrameListener;
                 var depth = fdl.GetDepthImagePixels();
                 var color = fdl.GetColorImagePixels();
-                //var dff = engine.DepthProcessor.DepthToDepthFloatFrame(depth);
-                //engine.DepthProcessor.SmoothDepthFloatFrame(dff);
+
+                if (DepthProcessor.DoSmoothDepth)
+                {
+                    _logger.Trace("Smoothing depth frame...");
+                    var dff = engine.DepthProcessor.DepthToDepthFloatFrame(depth);
+                    engine.DepthProcessor.SmoothDepthFloatFrame(dff);
+                    engine.DepthProcessor.DepthFloatFrame = dff;
+                }
 
                 if (CaptureColor && integrateColor)
                 {  
@@ -83,6 +92,65 @@ namespace KinectX.Fusion.Components
             }
 
             return colorAvailable;
+        }
+
+        public bool IntegrateData(byte[] colorBytes, ushort[] depthShorts)
+        {
+            bool integrateData = engine.CameraTracker.IsClearToIntegrate;
+
+            // Integrate the frame to volume
+            if (integrateData)
+            {
+                bool integrateColor = engine.CameraTracker.ProcessedFrameCount % ColorIntegrationInterval == 0;
+
+                // Reset this flag as we are now integrating data again
+                engine.CameraTracker.TrackingHasFailedPreviously = false;
+                var fdl = engine.FrameListener;
+                var depth = depthShorts;
+                var color = colorBytes;
+
+                if (DepthProcessor.DoSmoothDepth)
+                {
+                    _logger.Trace("Smoothing depth frame...");
+                    var dff = engine.DepthProcessor.DepthToDepthFloatFrame(depth);
+                    engine.DepthProcessor.SmoothDepthFloatFrame(dff);
+                    engine.DepthProcessor.DepthFloatFrame = dff;
+                }
+
+                if (CaptureColor && integrateColor)
+                {
+                    // Pre-process color
+                    var resampleColorFrame = engine.ColorProcessor.MapColorToDepth(
+                        depth,
+                        color,
+                        fdl.CoordinateMapper,
+                        engine.FusionVolume.MirrorDepth);
+
+                    // Integrate color and depth
+                    engine.FusionVolume.Reconstruction.IntegrateFrame(
+                        engine.DepthProcessor.DepthFloatFrame,
+                        engine.ColorProcessor.ResampledColorFrameDepthAligned,
+                        IntegrationWeight,
+                        FusionDepthProcessor.DefaultColorIntegrationOfAllAngles,
+                        engine.FusionVolume.WorldToCameraTransform);
+
+                    // Flag that we have captured color
+                    ColorCaptured = true;
+                }
+                else
+                {
+                    // Just integrate depth
+                    engine.FusionVolume.Reconstruction.IntegrateFrame(
+                        engine.DepthProcessor.DepthFloatFrame,
+                        IntegrationWeight,
+                        engine.FusionVolume.WorldToCameraTransform);
+                }
+
+                // Reset color ready event
+                engine.FrameListener.ColorReadyEvent.Reset();
+            }
+
+            return true;
         }
     }
 }

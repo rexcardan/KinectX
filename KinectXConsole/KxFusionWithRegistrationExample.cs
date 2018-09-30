@@ -5,9 +5,7 @@ using KinectX.Fusion;
 using KinectX.Fusion.Components;
 using KinectX.Fusion.Helpers;
 using KinectX.IO;
-using KinectX.Network;
 using KinectX.Registration;
-using Microsoft.Kinect.Fusion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace KinectXConsole
 {
-    class Program
+    public class KxFusionWithRegistrationExample
     {
-        static void Main(string[] args)
+        public static void Run(string[] args)
         {
             //Create a defined registration pattern - in this case a cube
             var cube = CoordinateDefinition.Cube();
@@ -35,30 +33,31 @@ namespace KinectXConsole
             var _3dImage = xef.LoadCameraSpace(5);
             var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
             var pose = kxTransform.FusionCameraPose.ToMatrix4();
+
             var fusion = new Engine();
             FusionVolume.VoxelsPerMeter = 128;
             FusionVolume.VoxelsX = 384;
             FusionVolume.VoxelsY = 384;
             FusionVolume.VoxelsZ = 384;
-            //Offset volume away from Kinect center (so you actually get some data)
+
+            //Start fusion volume at first pose
             fusion.InitializeFusionVolume(pose);
             VolumeResetter.TranslateResetPoseByMinDepthThreshold = false;
 
             fusion.DataIntegrator.CaptureColor = false;
             var listener = fusion.StartFrameListener<XefFrameListener>();
+            
+            //This would be where you would set your scan xef
             listener.SetXefFile(@"../../../Resources/cube.xef");
-
-            //fusion.FusionVolume.ResetReconstruction(kxTransform.FusionCameraPose.ToMatrix4());
+            //You need to set world to camera BEFORE scanning (if more than one XEF)
+            fusion.FusionVolume.WorldToCameraTransform = pose;
             fusion.Scanner.Scan(3, false);
 
             fusion.RenderController.RenderReconstructionAsMat();
             fusion.FusionVolume.Renderer.RenderReconstruction();
-            var voxelGrid = fusion.FusionVolume.GetVoxels();
-            var initialized = voxelGrid.Voxels.Count(v => v != short.MinValue);
-            var slice = voxelGrid.GetSlice(384/2);
-            
-            slice.Show();
-           // fusion.MeshExporter.ExportVolume(@"cube.ply");
+
+            //Export your model in world space (it is transformed already)
+            fusion.MeshExporter.ExportVolume(@"cube.ply");
             Console.Read();
         }
     }

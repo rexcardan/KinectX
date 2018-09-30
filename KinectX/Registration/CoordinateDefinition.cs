@@ -1,5 +1,4 @@
 ﻿using KinectX.Extensions;
-using KinectX.Help;
 using KinectX.Mathematics;
 using Microsoft.Kinect;
 using OpenCvSharp;

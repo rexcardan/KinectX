@@ -159,7 +159,7 @@ namespace KinectX.Fusion.Helpers
             tx.M41 = FusionVolume.VoxelsX / 2 + 0.5f; // Half and half each way
             //We need to shift top of the box off the central axis by 4/3 meters
             tx.M42 = WorldVolumeYShift;// 
-            tx.M43 = WorldVolumeZShift; //Slightly below the couch
+            tx.M43 = FusionVolume.VoxelsZ / 2 + 0.5f; //Slightly below the couch
             return tx;
         }
     }

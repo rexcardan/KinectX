@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props" Condition="Exists('..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props')" />
+  <Import Project="..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props" Condition="Exists('..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -60,27 +60,31 @@
   <ItemGroup>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Kinect.2.0.1410.19000\lib\net45\Microsoft.Kinect.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Kinect.Fusion, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
       <HintPath>..\packages\Microsoft.Kinect.Fusion.x64.2.0.1410.19000\lib\net45\Microsoft.Kinect.Fusion.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Kinect.Tools, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
       <HintPath>..\packages\Microsoft.Kinect.Tools.x64.2.0.1410.19000\lib\net45\Microsoft.Kinect.Tools.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.9\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.5.10\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
-      <HintPath>..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net40\OpenCvSharp.dll</HintPath>
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net46\OpenCvSharp.dll</HintPath>
     </Reference>
     <Reference Include="OpenCvSharp.Blob, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
-      <HintPath>..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net40\OpenCvSharp.Blob.dll</HintPath>
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net46\OpenCvSharp.Blob.dll</HintPath>
     </Reference>
     <Reference Include="OpenCvSharp.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
-      <HintPath>..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net40\OpenCvSharp.Extensions.dll</HintPath>
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net46\OpenCvSharp.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="OpenCvSharp.UserInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
-      <HintPath>..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net40\OpenCvSharp.UserInterface.dll</HintPath>
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\lib\net46\OpenCvSharp.UserInterface.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -102,9 +106,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\FrameListener.cs" />
-    <Compile Include="Data\LiveFrameListener.cs" />
-    <Compile Include="Data\XefFrameListener.cs" />
+    <Compile Include="Data\CvColor.cs" />
+    <Compile Include="Data\CvDepth.cs" />
+    <Compile Include="Data\Listeners\FrameListener.cs" />
+    <Compile Include="Data\Listeners\LiveFrameListener.cs" />
+    <Compile Include="Data\Listeners\XefFrameListener.cs" />
+    <Compile Include="Extensions\Array2dExtensions.cs" />
     <Compile Include="Extensions\CameraSpacePointExt.cs" />
     <Compile Include="Extensions\DoubleExt.cs" />
     <Compile Include="Extensions\MatExt.cs" />
@@ -130,8 +137,18 @@
     <Compile Include="Fusion\Helpers\KinectFusionHelper.cs" />
     <Compile Include="Fusion\Helpers\ScreenSpaceLines3D.cs" />
     <Compile Include="Fusion\Helpers\VolumeResetter.cs" />
+    <Compile Include="Fusion\VoxelGrid.cs" />
     <Compile Include="IO\Xef.cs" />
+    <Compile Include="Mathematics\KxTransform.cs" />
     <Compile Include="Mathematics\MathUtils.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\Functions.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\LUD.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\LUDResult.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\QRD.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\QRDResult.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\SVD.cs" />
+    <Compile Include="Mathematics\MatrixDecomp\SVDResult.cs" />
+    <Compile Include="Mathematics\MatrixHelper.cs" />
     <Compile Include="Mathematics\Transform.cs" />
     <Compile Include="Meta\KinectSettings.cs" />
     <Compile Include="Network\Interfaces\IKxServer.cs" />
@@ -164,9 +181,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Kinect20.Fusion.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -177,6 +195,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\source\repos\ConsoleApp1\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props'))" />
+    <Error Condition="!Exists('..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180830\build\OpenCvSharp3-AnyCPU.props'))" />
   </Target>
 </Project>

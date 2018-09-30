@@ -1,5 +1,4 @@
-﻿using KinectX.Help;
-using KinectX.Meta;
+﻿using KinectX.Meta;
 using Microsoft.Kinect.Tools;
 using NLog;
 using OpenCvSharp;

@@ -86,9 +86,8 @@ namespace KinectX.Fusion.Components
             this.DefaultWorldToVolumeTransform = this.Reconstruction.GetCurrentWorldToVolumeTransform();
             Renderer = new VolumeRenderer(e);
             resetter = new VolumeResetter();
-            //ResetReconstruction(0.4f, 0.10f);
-          //  this.DefaultWorldToVolumeTransform = Matrix4.Identity;
-            this.resetter.ResetReconstruction(this, startingWorldToCameraTx);
+            ResetReconstruction(0.4f, 0.10f);
+           // this.resetter.ResetReconstruction(this, startingWorldToCameraTx);
         }
 
 
@@ -103,6 +102,15 @@ namespace KinectX.Fusion.Components
 
         public VolumeRenderer Renderer { get; private set; }
         public Engine Engine { get; private set; }
+
+        public VoxelGrid GetVoxels()
+        {
+            short[] volumeBlock = new short[VoxelsX * VoxelsY * VoxelsZ];
+            this.Reconstruction.ExportVolumeBlock(0, 0, 0, VoxelsX, VoxelsY, VoxelsZ, 1, volumeBlock);
+            var grid = new VoxelGrid(VoxelsX, VoxelsY, VoxelsZ, volumeBlock);
+            return grid;
+        }
+
 
         #region EVENTS
         public event VolumeResetHandler VolumeReset;

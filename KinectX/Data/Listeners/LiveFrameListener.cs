@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KinectX.Data
+namespace KinectX.Data.Listeners
 {
     /// <summary>
     /// A frame listener for a connected Kinect (live data)

@@ -90,19 +90,19 @@ namespace KinectX.Extensions
             mat.M14 = (float)values[0, 3];
 
             mat.M21 = (float)values[1, 0];
-            mat.M21 = (float)values[1, 1];
-            mat.M21 = (float)values[1, 2];
-            mat.M21 = (float)values[1, 3];
+            mat.M22 = (float)values[1, 1];
+            mat.M23 = (float)values[1, 2];
+            mat.M24 = (float)values[1, 3];
 
             mat.M31 = (float)values[2, 0];
-            mat.M31 = (float)values[2, 1];
-            mat.M31 = (float)values[2, 2];
-            mat.M31 = (float)values[2, 3];
+            mat.M32 = (float)values[2, 1];
+            mat.M33 = (float)values[2, 2];
+            mat.M34 = (float)values[2, 3];
 
             mat.M41 = (float)values[3, 0];
-            mat.M41 = (float)values[3, 1];
-            mat.M41 = (float)values[3, 2];
-            mat.M41 = (float)values[3, 3];
+            mat.M42 = (float)values[3, 1];
+            mat.M43 = (float)values[3, 2];
+            mat.M44 = (float)values[3, 3];
             return mat;
         }
 
