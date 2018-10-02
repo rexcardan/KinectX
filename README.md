@@ -5,7 +5,7 @@ Kinect v2 Extension library
 The Kinect v2 was such a great piece of hardware but one of its major drawbacks was that it wasn't easy
 to develop for. The KinectX library is designed to make Kinect development much easier by
 abstracting concepts and creating a proper library for the things most people want. Some of the 
-highlight features are:
+highlight features are: 
 
 * Easier Kinect access
   * Get the color frame in 2 lines of code 
