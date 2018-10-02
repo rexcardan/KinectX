@@ -93,6 +93,7 @@
     <Compile Include="KxFusionNoRegistrationExample.cs" />
     <Compile Include="KxStandaloneServerExample.cs" />
     <Compile Include="OpenCvExample.cs" />
+    <Compile Include="XEFOpenCvExample.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteKinectXEFExample.cs" />

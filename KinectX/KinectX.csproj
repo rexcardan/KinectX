@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Data\CvColor.cs" />
     <Compile Include="Data\CvDepth.cs" />
+    <Compile Include="Data\KxStream.cs" />
     <Compile Include="Data\Listeners\FrameListener.cs" />
     <Compile Include="Data\Listeners\LiveFrameListener.cs" />
     <Compile Include="Data\Listeners\XefFrameListener.cs" />

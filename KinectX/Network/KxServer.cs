@@ -259,11 +259,6 @@ namespace KinectX.Network
             {
                 _logger.Info("Stopping Kinect service...");
                 KxServer._cancallationTokenSrc.Cancel();
-                //KxBuffer.instance.Stop();
-                //ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
-                //serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
-                //serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
-                //serviceHost.Close();
             }
             catch (Exception e)
             {

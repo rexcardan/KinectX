@@ -18,5 +18,12 @@ namespace KinectX.Data
                 Cv2.CvtColor(yuy2, this, ColorConversionCodes.YUV2BGRA_YUY2);
             }
         }
+
+        public static CvColor FromBGR(byte[] color)
+        {
+            return new CvColor(MatType.CV_8UC4, color);
+        }
+
+        private CvColor(MatType type, Array data) : base(KinectSettings.COLOR_HEIGHT, KinectSettings.COLOR_WIDTH, type, data) { }
     }
 }

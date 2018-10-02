@@ -51,30 +51,6 @@ namespace KinectX.IO
         public int NumOfDepthFrames { get; private set; }
         public int NumOfColorFrames { get; private set; }
 
-        public ColorProcessor LoadColorFrame(int desiredFrameNum, bool includeAlpha = false)
-        {
-            var cProcessor = new ColorProcessor();
-            cProcessor.FrameSelector = new FrameSelector(desiredFrameNum, 1);
-
-            using (KStudioClient client = KStudio.CreateClient(KStudioClientFlags.ProcessNotifications))
-            {
-                ManualResetEvent mr = new ManualResetEvent(false);
-                KStudioEventStreamSelectorCollection selEvents = new KStudioEventStreamSelectorCollection();
-                selEvents.Add(KStudioEventStreamDataTypeIds.UncompressedColor);
-
-                //This is where you will intercept steps in the XEF file
-                KStudioEventReader reader = client.CreateEventReader(_path, selEvents);
-
-                KStudioEvent ev;
-                while ((ev = reader.GetNextEvent()) != null && !cProcessor.FrameSelector.AreAllFramesCaptured)
-                {
-                    cProcessor.ProcessEvent(ev);
-                }
-                reader.Dispose();
-            }
-            return cProcessor;
-        }
-
         public CoordinateMapper GetEmbeddedCoordinateMapper()
         {
             _logger.Info("Loading coordinate mapper from XEF file...");
