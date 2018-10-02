@@ -1,21 +1,15 @@
-﻿using KinectX.Processors;
+﻿using KinectX.Data;
 using KinectX.Meta;
+using KinectX.Processors;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Tools;
-using NLog;
-using OpenCvSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using static KinectX.Processors.DepthProcessor;
-using System.IO;
-using KinectX.Data;
-using System.Diagnostics;
-using System.Reflection;
 using Microsoft.Win32.TaskScheduler;
+using NLog;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Threading;
 
 namespace KinectX.IO
 {

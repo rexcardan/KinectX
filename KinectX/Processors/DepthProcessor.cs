@@ -1,10 +1,8 @@
 ﻿using KinectX.Meta;
-using Microsoft.Kinect;
 using Microsoft.Kinect.Tools;
 using NLog;
 using OpenCvSharp;
 using System;
-using System.Threading.Tasks;
 
 namespace KinectX.Processors
 {

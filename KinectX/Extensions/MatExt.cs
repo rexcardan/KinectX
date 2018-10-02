@@ -1,10 +1,6 @@
 ﻿using Microsoft.Kinect.Fusion;
 using OpenCvSharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KinectX.Extensions
 {

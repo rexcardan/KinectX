@@ -6,11 +6,11 @@
 
 namespace KinectX.Fusion.Helpers
 {
+    using Microsoft.Kinect.Fusion;
     using System;
     using System.Globalization;
     using System.IO;
     using System.Windows.Media.Media3D;
-    using Microsoft.Kinect.Fusion;
 
     /// <summary>
     /// A helper class for common operations.

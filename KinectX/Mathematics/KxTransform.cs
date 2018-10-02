@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KinectX.Extensions;
-using Microsoft.Kinect.Fusion;
-using OpenCvSharp;
+﻿using KinectX.Extensions;
 
 namespace KinectX.Mathematics
 {

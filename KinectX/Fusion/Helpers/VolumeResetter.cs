@@ -1,6 +1,5 @@
 ﻿using KinectX.Extensions;
 using KinectX.Fusion.Components;
-using Microsoft.Kinect;
 using Microsoft.Kinect.Fusion;
 using NLog;
 using System;
