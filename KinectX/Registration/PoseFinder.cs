@@ -1,14 +1,12 @@
-﻿using KinectX.Mathematics;
-using KinectX.Extensions;
+﻿using KinectX.Extensions;
+using KinectX.Mathematics;
+using KinectX.Meta;
 using Microsoft.Kinect;
+using NLog;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NLog;
-using KinectX.Meta;
 
 namespace KinectX.Registration
 {

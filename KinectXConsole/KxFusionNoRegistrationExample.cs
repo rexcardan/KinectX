@@ -1,13 +1,8 @@
-﻿using KinectX.Data;
-using KinectX.Data.Listeners;
+﻿using KinectX.Data.Listeners;
 using KinectX.Fusion;
 using KinectX.Fusion.Components;
 using KinectX.Fusion.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KinectXConsole
 {

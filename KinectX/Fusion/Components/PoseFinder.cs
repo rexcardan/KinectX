@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using KinectX.Fusion.Helpers;
+using KinectX.Meta;
 using Microsoft.Kinect.Fusion;
 using NLog;
 using System.Globalization;
-using KinectX.Fusion.Helpers;
-using KinectX.Meta;
+using System.Threading.Tasks;
 
 namespace KinectX.Fusion.Components
 {

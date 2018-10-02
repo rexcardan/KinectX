@@ -1,26 +1,17 @@
 ﻿using KinectX.Data;
 using KinectX.IO;
 using KinectX.Meta;
-using KinectX.Network;
 using KinectX.Registration;
 using Microsoft.Kinect;
-using Microsoft.Kinect.Tools;
-using Microsoft.Win32.TaskScheduler;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace KinectX.Network
 {
