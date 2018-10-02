@@ -122,6 +122,16 @@ highlight features are:
             Console.ReadLine();
 ```
 
+### Installing a Windows Service for KinectX remote access
+1. Download the [MSI Package](https://github.com/rexcardan/KinectX/archive/KinectService_v1.0.zip)
+2. Open Powershell and run the following commands to open up the correct network ports
+```
+netsh http add urlacl url=http://+:9000/KxServer/service/ user="NT AUTHORITY\Authenticated Users"
+netsh http add urlacl url=http://+:8733/Design_Time_Addresses/KxServer/Service1/ user="NT AUTHORITY\Authenticated Users"
+```
+3. Install the MSI
+4. During installation, enter your Windows user credentials so the service can record XEF files remotely
+
 ### Client to remote server
 ```cs
             var cameras = KxServerFinder.FindServers();
