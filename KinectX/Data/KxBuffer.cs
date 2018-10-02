@@ -20,9 +20,10 @@ namespace KinectX.Data
 
         public static void StartBuffer()
         {
-            if(KxBuffer.instance == null)
+            if (KxBuffer.instance == null)
             {
-                KxBuffer.instance = new KxBuffer();            }
+                KxBuffer.instance = new KxBuffer();
+            }
         }
 
         public ushort[] depthShortBuffer = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
@@ -58,6 +59,18 @@ namespace KinectX.Data
             _logger.Info(string.Format("Sensor {0} open and streaming...", this.kinectSensor.UniqueKinectId));
         }
 
+        public void Stop()
+        {
+            this.kinectSensor = KinectSensor.GetDefault();
+            this.depthFrameReader.FrameArrived -= DepthFrameReader_FrameArrived;
+            this.colorFrameReader.FrameArrived -= ColorFrameReader_FrameArrived;
+            this.bodyFrameReader.FrameArrived -= BodyFrameReader_FrameArrived;
+            this.audioBeamFrameReader.FrameArrived -= AudioBeamFrameReader_FrameArrived;
+            this.kinectSensor.CoordinateMapper.CoordinateMappingChanged -= CoordinateMapper_CoordinateMappingChanged;
+            this.kinectSensor.Close();
+            KxBuffer.instance = null;
+        }
+
         private void CoordinateMapper_CoordinateMappingChanged(object sender, CoordinateMappingChangedEventArgs e)
         {
             _logger.Info(string.Format("Coordinate mapper changed. Configuring events...", this.kinectSensor.UniqueKinectId));
@@ -70,7 +83,7 @@ namespace KinectX.Data
             this.audioBeamFrameReader = this.kinectSensor.AudioSource.OpenReader();
             this.audioBeamFrameReader.FrameArrived += AudioBeamFrameReader_FrameArrived;
             this.audioBeamFrameReader.AudioSource.AudioBeams[0].AudioBeamMode = AudioBeamMode.Automatic;
-            this.audioBeamFrameReader.AudioSource.AudioBeams[0].BeamAngle=0.0f;
+            this.audioBeamFrameReader.AudioSource.AudioBeams[0].BeamAngle = 0.0f;
             this.coordinateMapper = this.kinectSensor.CoordinateMapper;
             coordinateMapperReady.Set();
         }
@@ -143,7 +156,7 @@ namespace KinectX.Data
                                 autoResetEvent.Set();
                     }
 
-                    if (rgbFrameReady.Any(ready=>!ready.WaitOne(0)))
+                    if (rgbFrameReady.Any(ready => !ready.WaitOne(0)))
                     {
                         lock (rgbByteBuffer)
                             colorFrame.CopyConvertedFrameDataToArray(rgbByteBuffer, ColorImageFormat.Bgra);

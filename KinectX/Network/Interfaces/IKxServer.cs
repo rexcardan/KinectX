@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace KinectX.Network.Interfaces
 {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -23,6 +25,18 @@ namespace KinectX.Network.Interfaces
 
         [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LatestRGBImage", ReplyAction = "http://tempuri.org/KxServer/LatestRGBImageResponse")]
         byte[] LatestRGBImage();
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/FusionCameraPose", ReplyAction = "http://tempuri.org/KxServer/FusionCameraPoseResponse")]
+        byte[] FusionCameraPose();
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/CameraPose", ReplyAction = "http://tempuri.org/KxServer/CameraPoseResponse")]
+        byte[] CameraPose();
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/RecordXef", ReplyAction = "http://tempuri.org/KxServer/RecordXefResponse")]
+        bool RecordXef(TimeSpan duration);
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LastRecording", ReplyAction = "http://tempuri.org/KxServer/LastRecordingResponse")]
+        byte[] LastRecording();
 
         [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LatestJPEGImage", ReplyAction = "http://tempuri.org/KxServer/LatestJPEGImageResponse")]
         byte[] LatestJPEGImage();

@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using static KinectX.Processors.DepthProcessor;
 using System.IO;
 using KinectX.Data;
+using System.Diagnostics;
+using System.Reflection;
+using Microsoft.Win32.TaskScheduler;
 
 namespace KinectX.IO
 {
@@ -267,6 +270,18 @@ namespace KinectX.IO
                 reader.Dispose();
             }
             return dProcessor;
+        }
+
+        public static void Record(string path, TimeSpan duration)
+        {
+            var current = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            _logger.Log(LogLevel.Info, $"Requested xef recording - {duration.TotalMilliseconds} ms.");
+            var info = new ProcessStartInfo();
+            current = Path.Combine(current, "KSUtil.exe");
+            var args = $"-record {path} {duration.TotalSeconds} -stream depth ir color";
+            var ts = TaskService.Instance;
+            ts.Execute(current).WithArguments(args).Once().AsTask("KxRecordTask").Run();
+            ts.RootFolder.DeleteTask("KxRecordTask",true);
         }
     }
 }

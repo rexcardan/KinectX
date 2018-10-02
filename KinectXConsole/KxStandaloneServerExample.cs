@@ -11,6 +11,7 @@ namespace KinectXConsole
         public static void Run(string[] args)
         {
             KinectX.Network.KxServer.Start();
+            Console.ReadLine();
         }
     }
 }

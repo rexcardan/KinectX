@@ -12,7 +12,7 @@ namespace KinectX.Mathematics
     public class KxTransform
     {
 
-        public KxTransform(double[,] camSpaceToWorldTx, bool isInvertZNeeded = true)
+        public KxTransform(double[,] camSpaceToWorldTx, bool isInvertZNeeded = false)
         {
             if (isInvertZNeeded)
             {
@@ -27,11 +27,13 @@ namespace KinectX.Mathematics
 
             FusionToWorldTx = CameraSpaceToWorldTx.Multiply(FusionToCamSpace);
             FusionCameraPose = FusionToWorldTx.Inverse().Transpose();
+            CameraPose = CameraSpaceToWorldTx.Inverse().Transpose();
         }
 
         public double[,] CameraSpaceToWorldTx { get; private set; }
         public double[,] FusionToWorldTx { get; private set; }
         public double[,] FusionCameraPose { get; set; }
+        public double[,] CameraPose { get; set; }
 
         private static double[,] FusionToCamSpace
         {

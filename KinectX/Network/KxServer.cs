@@ -1,10 +1,20 @@
 ﻿using KinectX.Data;
+using KinectX.IO;
 using KinectX.Meta;
 using KinectX.Network;
+using KinectX.Registration;
+using Microsoft.Kinect;
+using Microsoft.Kinect.Tools;
+using Microsoft.Win32.TaskScheduler;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
@@ -19,6 +29,7 @@ namespace KinectX.Network
     public class KxServer
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
+        private static CancellationTokenSource _cancallationTokenSrc = new CancellationTokenSource();
 
         private ushort[] depthShortBuffer = new ushort[KinectSettings.DEPTH_PIXEL_COUNT];
         private byte[] yuvByteBuffer = new byte[KinectSettings.COLOR_PIXEL_COUNT * 2];
@@ -29,7 +40,7 @@ namespace KinectX.Network
         private AutoResetEvent jpegFrameReady = new AutoResetEvent(false);
         private AutoResetEvent audioFrameReady = new AutoResetEvent(false);
         private Queue<byte[]> audioFrameQueue = new Queue<byte[]>();
-
+        private string _lastFilePath;
 
         public KxServer()
         {
@@ -94,11 +105,91 @@ namespace KinectX.Network
             return this.depthShortBuffer;
         }
 
+        [OperationContract]
+        public int GetArucoMarkerCount()
+        {
+            var yu2 = LatestYUVImage();
+            var colorCv = new CvColor(yu2);
+            //Find and draw (make sure it can be found)
+            var markers = Vision.FindAruco(colorCv);
+            return markers.Count;
+        }
+
+        [OperationContract]
+        public byte[] FusionCameraPose()
+        {
+            //Create a defined registration pattern - in this case a cube
+            var cube = CoordinateDefinition.Cube();
+            var yu2 = LatestYUVImage();
+            var colorCv = new CvColor(yu2);
+            //Find and draw (make sure it can be found)
+            var markers = Vision.FindAruco(colorCv);
+
+            if (!markers.Any()) { return PoseFormatter.PoseToBytes(new double[4, 4]); }//zeros
+
+            //Calculate pose
+            var depth = LatestDepthImage();
+            CameraSpacePoint[] _3dImage = new CameraSpacePoint[KinectSettings.COLOR_PIXEL_COUNT];
+            KxBuffer.instance.coordinateMapper.MapColorFrameToCameraSpace(depth, _3dImage);
+            var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
+            var pose = kxTransform.FusionCameraPose;
+            return PoseFormatter.PoseToBytes(pose);
+        }
+
+        [OperationContract]
+        public byte[] CameraPose()
+        {
+            //Create a defined registration pattern - in this case a cube
+            var cube = CoordinateDefinition.Cube();
+            var yu2 = LatestYUVImage();
+            var colorCv = new CvColor(yu2);
+            //Find and draw (make sure it can be found)
+            var markers = Vision.FindAruco(colorCv);
+
+            if (!markers.Any()) { return PoseFormatter.PoseToBytes(new double[4, 4]); }//zeros
+
+            //Calculate pose
+            var depth = LatestDepthImage();
+            CameraSpacePoint[] _3dImage = new CameraSpacePoint[KinectSettings.COLOR_PIXEL_COUNT];
+            KxBuffer.instance.coordinateMapper.MapColorFrameToCameraSpace(depth, _3dImage);
+            var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
+            var pose = kxTransform.CameraPose;
+            return PoseFormatter.PoseToBytes(pose);
+        }
+
+        [OperationContract]
+        public bool RecordXef(TimeSpan duration)
+        {
+            try
+            {
+                _logger.Log(LogLevel.Info, $"Requested xef recording - {duration.TotalMilliseconds} ms.");
+                var current = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                _lastFilePath = Path.Combine(current, "record.xef");
+                if (File.Exists(_lastFilePath))
+                    File.Delete(_lastFilePath);
+                Xef.Record(_lastFilePath, duration);
+                Thread.Sleep((int)duration.Add(TimeSpan.FromSeconds(2)).TotalMilliseconds);
+                _logger.Log(LogLevel.Info, $"Recording successful. Sending bytes from xef recording - {_lastFilePath}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e.ToString());
+                return false;
+            }
+        }
+
+        [OperationContract]
+        public byte[] LastRecording()
+        {
+            if (_lastFilePath == null || !File.Exists(_lastFilePath)) { return new byte[0]; }
+            return File.ReadAllBytes(_lastFilePath);
+        }
 
         [OperationContract]
         public byte[] LatestJPEGImage()
         {
-            throw new NotImplementedException();
+            return new byte[0];
         }
 
 
@@ -115,7 +206,13 @@ namespace KinectX.Network
         [OperationContract]
         public byte[] LatestYUVImage()
         {
-            throw new NotImplementedException();
+            _logger.Info("YUV frame requested...");
+            this.yuvFrameReady.WaitOne();
+            _logger.Info("YUV frame ready. Copying frame...");
+            lock (KxBuffer.instance.yuvFrameReady)
+                Buffer.BlockCopy((Array)KxBuffer.instance.yuvByteBuffer, 0, (Array)this.yuvByteBuffer, 0, KinectSettings.COLOR_PIXEL_COUNT * 2);
+            _logger.Info("Returning frame");
+            return this.yuvByteBuffer;
         }
 
 
@@ -133,16 +230,46 @@ namespace KinectX.Network
             }
         }
 
-        public static void Start()
+        public async static void Start()
         {
-            _logger.Info("Starting Kinect service...");
-            KxBuffer.StartBuffer();
-            ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
-            serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
-            serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
-            serviceHost.Open();
-            _logger.Info("Kinect listener service!");
-            Console.ReadLine();
+            try
+            {
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    _logger.Info("Starting Kinect service...");
+                    KxBuffer.StartBuffer();
+                    ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
+                    serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
+                    serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
+                    serviceHost.Open();
+                    _logger.Info("Kinect listener service!");
+                    Console.ReadLine();
+                }, KxServer._cancallationTokenSrc.Token);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                Stop();
+            }
+        }
+
+        public static void Stop()
+        {
+            try
+            {
+                _logger.Info("Stopping Kinect service...");
+                KxServer._cancallationTokenSrc.Cancel();
+                //KxBuffer.instance.Stop();
+                //ServiceHost serviceHost = new ServiceHost(typeof(KxServer));
+                //serviceHost.Description.Behaviors.Add(new ServiceDiscoveryBehavior());
+                //serviceHost.AddServiceEndpoint(new UdpDiscoveryEndpoint());
+                //serviceHost.Close();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                Stop();
+            }
         }
     }
 }

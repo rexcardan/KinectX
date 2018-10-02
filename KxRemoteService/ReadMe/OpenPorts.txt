@@ -1,0 +1,4 @@
+Run this command in powershell with administrative rights:
+
+netsh http add urlacl url=http://+:9000/KxServer/service/ user="NT AUTHORITY\Authenticated Users"
+netsh http add urlacl url=http://+:8733/Design_Time_Addresses/KxServer/Service1/ user="NT AUTHORITY\Authenticated Users"

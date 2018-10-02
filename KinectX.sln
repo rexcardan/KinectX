@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectX", "KinectX\KinectX.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectXConsole", "KinectXConsole\KinectXConsole.csproj", "{3332EC53-DE11-4218-AC59-CC6E93DAA568}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KxRemoteService", "KxRemoteService\KxRemoteService.csproj", "{6F833858-5387-4749-880F-C4DD55BEF54B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{3332EC53-DE11-4218-AC59-CC6E93DAA568}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3332EC53-DE11-4218-AC59-CC6E93DAA568}.Release|x64.ActiveCfg = Release|x64
 		{3332EC53-DE11-4218-AC59-CC6E93DAA568}.Release|x64.Build.0 = Release|x64
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Debug|x64.ActiveCfg = Debug|x64
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Debug|x64.Build.0 = Debug|x64
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F833858-5387-4749-880F-C4DD55BEF54B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

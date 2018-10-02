@@ -15,7 +15,7 @@ namespace KinectX.Data
         {
             using (var yuy2 = new Mat(KinectSettings.COLOR_HEIGHT, KinectSettings.COLOR_WIDTH, MatType.CV_8UC2, yuy2Pixels))
             {
-                Cv2.CvtColor(yuy2, this, ColorConversionCodes.YUV2RGBA_YUY2);
+                Cv2.CvtColor(yuy2, this, ColorConversionCodes.YUV2BGRA_YUY2);
             }
         }
     }

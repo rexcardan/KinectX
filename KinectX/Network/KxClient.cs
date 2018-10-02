@@ -15,7 +15,7 @@ namespace KinectX.Network
         public static KxClient GenerateClient(EndpointAddress address)
         {
             var binding = new NetTcpBinding();
-            binding.MaxReceivedMessageSize = 8295424;
+            binding.MaxReceivedMessageSize = 2147483647;
             binding.Security.Mode = SecurityMode.None;
             var client = new KxClient(binding, address);
             try
@@ -71,15 +71,24 @@ namespace KinectX.Network
             return base.Channel.LastColorExposureTimeTicks();
         }
 
+        public byte[] FusionCameraPose()
+        {
+            return base.Channel.FusionCameraPose();
+        }
 
-        //public KinectX.Network.Kinect2Calibration GetCalibration()
-        //{
-        //    return base.Channel.GetCalibration();
-        //}
+        public byte[] CameraPose()
+        {
+            return base.Channel.CameraPose();
+        }
 
-        //public System.Threading.Tasks.Task<KinectX.Network.Kinect2Calibration> GetCalibrationAsync()
-        //{
-        //    return base.Channel.GetCalibrationAsync();
-        //}
+        public bool RecordXef(TimeSpan duration)
+        {
+            return base.Channel.RecordXef(duration);
+        }
+
+        public byte[] LastRecording()
+        {
+            return base.Channel.LastRecording();
+        }
     }
 }
