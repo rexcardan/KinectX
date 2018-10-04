@@ -1,5 +1,6 @@
 ﻿using KinectX.Mathematics;
 using KinectX.Mathematics.MatrixDecomp;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -310,6 +311,15 @@ namespace KinectX.Extensions
         }
 
         #endregion
+
+        public static Mat ToMat(double[,] array)
+        {
+            var mat = new Mat(new Size(array.GetLength(0), array.GetLength(1)), MatType.CV_64FC1,array);
+            foreach(var row in array)
+            {
+
+            }
+        }
     }
 
     public class InvalidSizeException : Exception

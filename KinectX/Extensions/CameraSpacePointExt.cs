@@ -1,12 +1,16 @@
-﻿using Microsoft.Kinect;
+﻿using KinectX.Meta;
+using Microsoft.Kinect;
 using OpenCvSharp;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace KinectX.Extensions
 {
     public static class CameraSpacePointExt
     {
+        public static object Mashal { get; private set; }
+
         public static List<Point3f> ToPointCloud(this CameraSpacePoint[] cspts, MatOfFloat pose)
         {
             List<Point3f> cloud = new List<Point3f>();
@@ -22,6 +26,22 @@ namespace KinectX.Extensions
                 }
             }
             return cloud;
+        }
+
+        public static CameraSpacePoint MeanValueInRange(this CameraSpacePoint[] cspts, params Range[] range)
+        {
+            var mat = cspts.ToMat();
+            var cropped = mat.SubMat(range);
+            var mean = mat.Mean();
+            return new CameraSpacePoint() { X = (float)mean.Val0, Y = (float)mean.Val1, Z = (float)mean.Val2 };
+        }
+
+        public static Mat ToMat(this CameraSpacePoint[] cspts)
+        {
+            var mat = new Mat(KinectSettings.COLOR_HEIGHT, KinectSettings.COLOR_WIDTH, MatType.CV_32FC3);
+            var floats = cspts.SelectMany(c => new float[] { c.X, c.Y, c.Z }).ToArray();
+            Marshal.Copy(floats, 0, mat.Data, floats.Length);
+            return mat;
         }
 
         public static Point3f AsPoint3f(this CameraSpacePoint cspt)

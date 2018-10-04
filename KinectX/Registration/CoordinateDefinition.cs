@@ -1,6 +1,7 @@
 ﻿using KinectX.Extensions;
 using OpenCvSharp;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace KinectX.Registration
 {
@@ -15,6 +16,10 @@ namespace KinectX.Registration
         /// </summary>
         public Dictionary<int, List<Point3f>> CornerDefinitions { get; private set; } = new Dictionary<int, List<Point3f>>();
 
+        /// <summary>
+        /// A dictionary containing the fiducial ids with a list of the center (of the marker) 3D coordinates. Coordinates are stored in meters
+        /// </summary>
+        public Dictionary<int, Point3f> CenterDefinitions { get; private set; } = new Dictionary<int, Point3f>();
 
         /// <summary>
         /// Returns whether the input code is present in this code defition. Used to filter unknown codes
@@ -42,11 +47,13 @@ namespace KinectX.Registration
             var bottomR = new Point3f(topL.X + nx.X + ny.X, topL.Y + nx.Y + ny.Y, topL.Z + nx.Z + ny.Z);
             var bottomL = new Point3f(topL.X + ny.X, topL.Y + ny.Y, topL.Z + ny.Z);
 
+
             corners.Add(topL);
             corners.Add(topR);
             corners.Add(bottomR);
             corners.Add(bottomL);
-
+            var center = new Point3f(corners.Average(c => c.X), corners.Average(c => c.Y), corners.Average(c => c.Z));
+            CenterDefinitions.Add(id, center);
             CornerDefinitions.Add(id, corners);
         }
 

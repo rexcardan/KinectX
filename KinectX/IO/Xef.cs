@@ -80,6 +80,11 @@ namespace KinectX.IO
             return points;
         }
 
+        public CvCameraSpace LoadCVCameraSpace(int frame, int numberofSmoothingFrames = 1)
+        {
+            return new CvCameraSpace(LoadCameraSpace(frame, numberofSmoothingFrames));
+        }
+
         public ushort[] LoadDepthFrameFromPlayback(int desiredFrameNum)
         {
             var pixels = new ushort[KinectSettings.DEPTH_HEIGHT * KinectSettings.DEPTH_WIDTH];

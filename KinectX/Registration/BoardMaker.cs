@@ -25,7 +25,7 @@ namespace KinectX.Registration
 
             var pixelsPerCM = 300 / 2.54; 
 
-            //3 SQUARES WIDE, 3 SQUARES HIGH, 150 margin on width,
+            //2 SQUARES WIDE, 2 SQUARES HIGH, 150 margin on width,
             //100 margin on height
             var paperPxWidth = pixelsPerCM* 10.4; //11in - 1in margin *300px/in
             var paperPxHeight = pixelsPerCM * 10.4; //17in - 1in margin *300px/in

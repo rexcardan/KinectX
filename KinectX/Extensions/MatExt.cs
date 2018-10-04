@@ -82,5 +82,24 @@ namespace KinectX.Extensions
             Cv2.ImShow("Mat", mat);
             Cv2.WaitKey(10);
         }
+
+        /// <summary>
+        /// Mask for values which are real locations
+        /// </summary>
+        public static Mat GetRealMask(this Mat mat)
+        {
+            return mat.InRange(new MatOfFloat(1, 1, float.MinValue), new MatOfFloat(1, 1, float.MaxValue));
+        }
+
+        /// <summary>
+        /// Mask for values which are inf, inf, inf or NaN, Nan, Nan
+        /// </summary>
+        /// <returns></returns>
+        public static Mat GetIndeterminteMask(this Mat mat)
+        {
+            var mask = new Mat();
+            Cv2.BitwiseNot(mat.GetRealMask(), mask);
+            return mask;
+        }
     }
 }
