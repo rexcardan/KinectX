@@ -92,7 +92,9 @@
     <Compile Include="KxFusionWithRegistrationExample.cs" />
     <Compile Include="KxFusionNoRegistrationExample.cs" />
     <Compile Include="KxStandaloneServerExample.cs" />
+    <Compile Include="MulticameraFusionExample.cs" />
     <Compile Include="OpenCvExample.cs" />
+    <Compile Include="RGBPointCloudExample.cs" />
     <Compile Include="XEFOpenCvExample.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

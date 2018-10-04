@@ -1,4 +1,5 @@
 ﻿using KinectX.Extensions;
+using KinectX.IO;
 using KinectX.Mathematics;
 using KinectX.Meta;
 using Microsoft.Kinect;
@@ -14,68 +15,22 @@ namespace KinectX.Registration
     {
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        /// <summary>
-        /// Calculates the camera pose (Kinect space to real space transform) based on coordinate definition
-        /// and detected markers
-        /// </summary>
-        /// <param name="def">the definition of the visible coordinates</param>
-        /// <param name="_3dImage">the 3d points mapped to Kinect color coordinates</param>
-        /// <param name="markers">the detected markers in the color image</param>
-        /// <returns>a 4x4 matrix of the camera pose</returns>
-        public static MatOfFloat GetPoseFromImage(CoordinateDefinition def, CameraSpacePoint[] _3dImage, List<Marker> markers)
-        {
-            MatOfPoint3f sourcePts = new MatOfPoint3f();
-            MatOfPoint3f destPts = new MatOfPoint3f();
-            MatOfPoint3f transformedTest = new MatOfPoint3f();
+        public static KxTransform GetPoseFromXef(string xefPath)
+        {           
+            //Create a defined registration pattern - in this case a cube
+            var cube = CoordinateDefinition.Cube();
+            //Find registration
+            var xef = new Xef(xefPath);
+            var colorCv = xef.LoadCvColorFrame(0);
 
-            if (markers != null)
-            {
-                //For each marker found, look up Kinect position (2D -> 3D), find corresponding real position
-                //Add KPos and RealPos to two arrays to calculate the transform between
-                markers.ForEach(m =>
-                {
-                    if (def.ContainsCode(m.Id))
-                    {
-                        var kPositions = new List<Point3f>();
-                        //Order of pts is Top Left, Top Right, Bottom Right, Bottom Left
-                        for (int i = 0; i < m.Points.Length; i++) // Length will be 4
-                        {
-                            var kPos = GetKinectPosition(_3dImage, m.Points[i]);
-                            kPositions.Add(kPos);
-                            if (!double.IsNaN(kPos.X)) // then all not Nan
-                            {
-                                var realPos = def.CornerDefinitions[m.Id][i];
-                                //Source is Kinect position
-                                sourcePts.Add(kPos);
-                                //Destination is actual physical location
-                                destPts.Add(realPos);
-                            }
-                        }
-                        //Add kinect positions to marker object
-                        m.KinectPositions = kPositions.ToArray();
-                    }
-                });
+            //Find and draw (make sure it can be found)
+            var markers = Vision.FindAruco(colorCv);
+            //Vision.DrawAruco(colorCv).Show();
 
-                _logger.Info($"Using {sourcePts.Count / 4} markers to find pose...");
-
-                //Need to flip Z to get into DICOM coordinates
-                if (!sourcePts.Any() || !destPts.Any())
-                {
-                    throw new Exception("No points to transform!");
-                }
-                var txArray = new float[4, 4];
-                var tx = Transform.TransformBetween(sourcePts, destPts);
-
-                //Validate Pose
-                //Validate that the transforms are valid...Low average and low STD desired
-                var deltas = PoseFinder.ValidatePose(tx, def, markers);
-                var avgDelta = deltas.Average();
-                var std = deltas.StdDev();
-                _logger.Info($"Pose calculated with average delta of : ");
-                _logger.Info($"{(avgDelta*1000).ToString("N3")} ± {(std*1000).ToString("N3")} mm");
-                return tx;
-            }
-            throw new ArgumentException("Markers cannot be null.");
+            //Calculate pose
+            var _3dImage = xef.LoadCameraSpace(5);
+            var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
+            return kxTransform;
         }
 
         public static List<float> ValidatePose(MatOfFloat pose, CoordinateDefinition def, List<Marker> markers)

@@ -141,6 +141,7 @@
     <Compile Include="Fusion\Helpers\ScreenSpaceLines3D.cs" />
     <Compile Include="Fusion\Helpers\VolumeResetter.cs" />
     <Compile Include="Fusion\VoxelGrid.cs" />
+    <Compile Include="IO\XYZRGB.cs" />
     <Compile Include="IO\PoseFormatter.cs" />
     <Compile Include="IO\Xef.cs" />
     <Compile Include="Mathematics\KxTransform.cs" />

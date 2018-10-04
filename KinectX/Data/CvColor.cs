@@ -1,5 +1,7 @@
 ﻿using KinectX.Meta;
 using OpenCvSharp;
+using System;
+using System.Runtime.InteropServices;
 
 namespace KinectX.Data
 {
@@ -16,6 +18,13 @@ namespace KinectX.Data
         public static CvColor FromBGR(byte[] color)
         {
             return new CvColor(MatType.CV_8UC4, color);
+        }
+
+        public byte[] GetBRGABytes()
+        {
+            byte[] data = new byte[KinectSettings.COLOR_HEIGHT * KinectSettings.COLOR_WIDTH * 4];
+            Marshal.Copy(this.Data, data, 0, data.Length);
+            return data;
         }
 
         private CvColor(MatType type, Array data) : base(KinectSettings.COLOR_HEIGHT, KinectSettings.COLOR_WIDTH, type, data) { }

@@ -1,4 +1,15 @@
-﻿using System;
+﻿using KinectX.Data.Listeners;
+using KinectX.Extensions;
+using KinectX.Fusion;
+using KinectX.Fusion.Components;
+using KinectX.Fusion.Helpers;
+using KinectX.IO;
+using KinectX.Registration;
+using OpenCvSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Pose = KinectX.Registration.PoseFinder;
 
 namespace KinectXConsole
 {
@@ -6,14 +17,7 @@ namespace KinectXConsole
     {
         static void Main(string[] args)
         {
-            using (var ks = new KxStream())
-            {
-                var color = ks.LatestRGBImage();
-                var cvColor = CvColor.FromBGR(color);
-                var depth = ks.LatestDepthImage();
-                cvColor.Show();
-            }
-            Console.Read();
+           
         }
     }
 }

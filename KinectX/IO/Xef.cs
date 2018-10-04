@@ -98,10 +98,6 @@ namespace KinectX.IO
                     {
                         Thread.Sleep(250);
                     }
-                    //var depthTest = LoadDepthFrame(desiredFrameNum, 1).GetAverageFrame();
-                    //CameraSpacePoint[] points = new CameraSpacePoint[KinectSettings.COLOR_HEIGHT * KinectSettings.COLOR_WIDTH];
-                    //var cm = KinectSensor.GetDefault().CoordinateMapper;
-                    //cm.MapColorFrameToCameraSpace(depthTest, points);
                 }
             }
             return _pixels;
@@ -132,20 +128,30 @@ namespace KinectX.IO
         public int GetNumOfFrames(Guid typeId)
         {
             int numFrames = 0;
-            using (KStudioClient client = KStudio.CreateClient(KStudioClientFlags.ProcessNotifications))
+            try
             {
-                ManualResetEvent mr = new ManualResetEvent(false);
-                KStudioEventStreamSelectorCollection selEvents = new KStudioEventStreamSelectorCollection();
-                selEvents.Add(typeId);
-                //This is where you will intercept steps in the XEF file
-                using (var reader = client.CreateEventReader(_path, selEvents))
+                using (KStudioClient client = KStudio.CreateClient(KStudioClientFlags.ProcessNotifications))
                 {
-                    KStudioEvent ev;
-                    reader.GetNextEvent();
-                    while ((ev = reader.GetNextEvent()) != null)
+                    ManualResetEvent mr = new ManualResetEvent(false);
+                    KStudioEventStreamSelectorCollection selEvents = new KStudioEventStreamSelectorCollection();
+                    selEvents.Add(typeId);
+                    //This is where you will intercept steps in the XEF file
+                    using (var reader = client.CreateEventReader(_path, selEvents))
                     {
-                        numFrames++;
+                        KStudioEvent ev;
+                        reader.GetNextEvent();
+                        while ((ev = reader.GetNextEvent()) != null)
+                        {
+                            numFrames++;
+                        }
                     }
+                }
+            }
+            catch(Exception e)
+            {
+                if(e.Message == "Operation is not valid due to the current state of the object.")
+                {
+                    throw new Exception($"No events of type {typeId} in this XEF file!");
                 }
             }
             return numFrames;
