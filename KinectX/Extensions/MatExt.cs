@@ -1,6 +1,9 @@
-﻿using Microsoft.Kinect.Fusion;
+﻿using Microsoft.Kinect;
+using Microsoft.Kinect.Fusion;
 using OpenCvSharp;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KinectX.Extensions
 {
@@ -100,6 +103,39 @@ namespace KinectX.Extensions
             var mask = new Mat();
             Cv2.BitwiseNot(mat.GetRealMask(), mask);
             return mask;
+        }
+
+        public static List<Point3f> AsPoint3fs(this Mat mat)
+        {
+            if (mat.Channels() == 4)
+            {
+                var vals = new Vec4f[mat.Total()];
+                mat.GetArray(0, 0, vals);
+                return vals.Select(v => new Point3f(v.Item0, v.Item1,  v.Item2)).ToList();
+            }
+            else
+            {
+                var vals = new Point3f[mat.Total()];
+                mat.GetArray(0, 0, vals);
+                return vals.ToList();
+            }
+        }
+
+        public static CameraSpacePoint[] ToCamSpacePoints(this Mat mat)
+        {
+            if (mat.Channels() == 4)
+            {
+                var vals = new Vec4f[mat.Total()];
+                mat.GetArray(0, 0, vals);
+                return vals.Select(v => new CameraSpacePoint() { X = v.Item0, Y = v.Item1, Z = v.Item2 }).ToArray();
+            }
+            else
+            {
+                var vals = new Point3f[mat.Total()];
+                mat.GetArray(0, 0, vals);
+                return vals.Select(v => new CameraSpacePoint() { X = v.X, Y = v.Y, Z = v.Z }).ToArray();
+            }
+            
         }
     }
 }

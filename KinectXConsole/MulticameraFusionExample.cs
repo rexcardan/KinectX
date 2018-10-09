@@ -10,13 +10,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pose = KinectX.Registration.PoseFinder;
+using Pose = KinectX.Registration.XefPoseFinder;
 
 namespace KinectXConsole
 {
     public class MulticameraFusionExample
     {
-        static void Run(string[] args)
+        public static void Run(string[] args)
         {
             int NUM_SCANS_PER_CAMERA = 20;
 
@@ -25,8 +25,8 @@ namespace KinectXConsole
 
             var scans = new Dictionary<string, string>()
             {
-                {@"C:\XEF\cam1_cal.xef", @"C:\XEF\cam1_scan.xef" },
-                {@"C:\XEF\cam2_cal.xef", @"C:\XEF\cam2_scan.xef" }
+                {@"C:\XEF\cam2_cal.xef", @"C:\XEF\cam2_cal.xef" },
+               // {@"C:\XEF\cam1_cal.xef", @"C:\XEF\cam1_cal.xef" }
             };
 
             var fusion = new Engine();
@@ -63,7 +63,7 @@ namespace KinectXConsole
             fusion.FusionVolume.Renderer.RenderReconstruction();
             Cv2.WaitKey(0);
             //Export your model in world space (it is transformed already)
-            fusion.MeshExporter.ExportVolume(@"scan.ply");
+            fusion.MeshExporter.ExportVolume(@"C:\XEF\scan.ply");
             Console.Read();
         }
     }

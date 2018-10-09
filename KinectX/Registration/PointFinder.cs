@@ -1,58 +1,16 @@
-﻿using KinectX.Extensions;
-using KinectX.IO;
-using KinectX.Mathematics;
-using KinectX.Meta;
+﻿using KinectX.Meta;
 using Microsoft.Kinect;
-using NLog;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KinectX.Registration
 {
-    public class PoseFinder
+    public class PointFinder
     {
-        private static ILogger _logger = LogManager.GetCurrentClassLogger();
-
-        public static KxTransform GetPoseFromXef(string xefPath)
-        {           
-            //Create a defined registration pattern - in this case a cube
-            var cube = CoordinateDefinition.Cube();
-            //Find registration
-            var xef = new Xef(xefPath);
-            var colorCv = xef.LoadCvColorFrame(0);
-
-            //Find and draw (make sure it can be found)
-            var markers = Vision.FindAruco(colorCv);
-            //Vision.DrawAruco(colorCv).Show();
-
-            //Calculate pose
-            var _3dImage = xef.LoadCameraSpace(5);
-            var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
-            return kxTransform;
-        }
-
-        public static List<float> ValidatePose(MatOfFloat pose, CoordinateDefinition def, List<Marker> markers)
-        {
-            List<float> deltas = new List<float>();
-            markers.ForEach(m =>
-            {
-                if (def.ContainsCode(m.Id))
-                {
-                    for (int i = 0; i < m.Points.Length; i++)
-                    {
-                        var realPos = def.CornerDefinitions[m.Id][i];
-                        var kPos = m.KinectPositions[i];
-                        var ptTx = pose.TransformPoint3f(kPos);
-                        var delta = (ptTx - realPos).Magnitude();
-                        deltas.Add(delta);
-                    }
-                }
-            });
-            return deltas;
-        }
-
         /// <summary>
         /// Looks up the 2D point in color space to the corresponding 3D point from the camera space map.
         /// Also interpolates in 3D space if 2D point is not an integer pixel  (often the case)

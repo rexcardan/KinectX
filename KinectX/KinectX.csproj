@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>KinectX</RootNamespace>
     <AssemblyName>KinectX</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
@@ -176,7 +176,8 @@
     <Compile Include="Registration\Calibrator.cs" />
     <Compile Include="Registration\CoordinateDefinition.cs" />
     <Compile Include="Registration\Marker.cs" />
-    <Compile Include="Registration\PoseFinder.cs" />
+    <Compile Include="Registration\PointFinder.cs" />
+    <Compile Include="Registration\XefPoseFinder.cs" />
     <Compile Include="Registration\Vision.cs" />
     <Compile Include="Rendering\BytePixelRenderer.cs" />
     <Compile Include="Rendering\FusionColorFrameImageRenderer.cs" />

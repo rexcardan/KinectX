@@ -4,6 +4,7 @@ using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace KinectX.Extensions
 {
@@ -312,13 +313,13 @@ namespace KinectX.Extensions
 
         #endregion
 
-        public static Mat ToMat(double[,] array)
+        public static Mat ToMat(this double[,] array)
         {
-            var mat = new Mat(new Size(array.GetLength(0), array.GetLength(1)), MatType.CV_64FC1,array);
-            foreach(var row in array)
-            {
-
-            }
+            var mat = new Mat(new Size(array.GetLength(0), array.GetLength(1)), MatType.CV_64FC1);
+            var oneDim = new double[array.Length];
+            Buffer.BlockCopy(array, 0, oneDim, 0, array.Length*sizeof(double));
+            Marshal.Copy(oneDim, 0, mat.Data, oneDim.Length);
+            return mat;
         }
     }
 

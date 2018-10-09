@@ -18,17 +18,28 @@ namespace KinectX.Data
             Marshal.Copy(floats, 0, Data, floats.Length);
         }
 
-        private unsafe CvCameraSpace(Mat m) : base(m.Rows, m.Cols, m.Type())
+        public CvCameraSpace() : base(0, 1, MatType.CV_32FC3)
         {
-            var size = m.Total() * m.ElemSize();
-            Buffer.MemoryCopy(m.DataPointer, DataPointer, size, size);
+
         }
 
-        public Point3f[] GetPoints()
+        private unsafe CvCameraSpace(Mat m) : base(m.Rows, m.Cols, m.Type())
+        {
+            m.CopyTo(this);
+        }
+
+        public void Add(Point3f point)
+        {
+            var mat = new Mat(1, 1, MatType.CV_32FC3, new Scalar(point.X, point.Y, point.Z));
+            base.Add(mat);
+        }
+
+
+        public CameraSpacePoint[] GetPoints()
         {
             var vals = new Point3f[KinectSettings.COLOR_PIXEL_COUNT];
             GetArray(0, 0, vals);
-            return vals;
+            return vals.Select(v => new CameraSpacePoint() { X = v.X, Y = v.Y, Z = v.Z }).ToArray();
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pose = KinectX.Registration.PoseFinder;
+using Pose = KinectX.Registration.XefPoseFinder;
 
 namespace KinectXConsole
 {
@@ -19,6 +19,9 @@ namespace KinectXConsole
     {
         static void Main(string[] args)
         {
+            RGBPointCloudExampleWithMarkerHightlights.Run(null);
+            MulticameraFusionExample.Run(null);
+
             var xefPath = @"C:\XEF\cam1_cal.xef";
             var xef = new Xef(xefPath);
             //Load computer vision (CV) color file

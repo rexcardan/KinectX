@@ -122,7 +122,8 @@ namespace KinectX.Network
             var depth = LatestDepthImage();
             CameraSpacePoint[] _3dImage = new CameraSpacePoint[KinectSettings.COLOR_PIXEL_COUNT];
             KxBuffer.instance.coordinateMapper.MapColorFrameToCameraSpace(depth, _3dImage);
-            var kxTransform = Vision.GetPoseFromImage_Corners(cube, _3dImage, markers);
+            var cvCameraSpace = new CvCameraSpace(_3dImage);
+            var kxTransform = Vision.GetPoseFromImage(cube, cvCameraSpace, markers);
             var pose = kxTransform.FusionCameraPose;
             return PoseFormatter.PoseToBytes(pose);
         }
@@ -143,7 +144,8 @@ namespace KinectX.Network
             var depth = LatestDepthImage();
             CameraSpacePoint[] _3dImage = new CameraSpacePoint[KinectSettings.COLOR_PIXEL_COUNT];
             KxBuffer.instance.coordinateMapper.MapColorFrameToCameraSpace(depth, _3dImage);
-            var kxTransform = Vision.GetPoseFromImage_Corners(cube, _3dImage, markers);
+            var cvCameraSpace = new CvCameraSpace(_3dImage);
+            var kxTransform = Vision.GetPoseFromImage(cube, cvCameraSpace, markers);
             var pose = kxTransform.CameraPose;
             return PoseFormatter.PoseToBytes(pose);
         }

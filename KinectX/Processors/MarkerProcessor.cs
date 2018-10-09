@@ -18,9 +18,11 @@ namespace KinectX.Processors
             var marker_3d = cs.SubMat(Cv2.BoundingRect(marker.Points));
             //Mask out pixels with bad (infinite) data
             var realMask = marker_3d.GetRealMask();
+            marker.MaskSum = realMask.Sum();
             //Find the mean of all of the 3D points
             var scalarCenter = marker_3d.Mean();
             return new Point3f((float)scalarCenter.Val0, (float)scalarCenter.Val1, (float)scalarCenter.Val2);
-        }
+        }  
+        
     }
 }

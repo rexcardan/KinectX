@@ -25,7 +25,7 @@ namespace KinectXConsole
             //Vision.DrawAruco(colorCv).Show();
 
             //Calculate pose
-            var _3dImage = xef.LoadCameraSpace(5);
+            var _3dImage = xef.LoadCVCameraSpace(5);
             var kxTransform = Vision.GetPoseFromImage(cube, _3dImage, markers);
             var pose = kxTransform.FusionCameraPose.ToMatrix4();
 

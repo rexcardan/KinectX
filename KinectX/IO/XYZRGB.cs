@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KinectX.Extensions;
+using OpenCvSharp;
 
 namespace KinectX.IO
 {
@@ -37,6 +38,37 @@ namespace KinectX.IO
                     }
                 }
             }
+        }
+
+        public static void Export(IEnumerable<Point3f> points, Scalar bgrColor, string outputFileName)
+        {
+            using (TextWriter writer = new StreamWriter(outputFileName))
+            {
+                foreach (var v in points)
+                {
+
+                    writer.Write(v.X.ToString("e") + " ");
+                    writer.Write(v.Y.ToString("e") + " ");
+                    writer.Write(v.Z.ToString("e") + " ");
+
+                    //Assume BGRA format
+                    var blue = (int)bgrColor.Val0;
+                    var green = (int)bgrColor.Val1;
+                    var red = (int)bgrColor.Val2;
+
+                    writer.Write(red + " ");
+                    writer.Write(green + " ");
+                    writer.Write(blue + " ");
+                    writer.WriteLine();
+
+                }
+            }
+        }
+
+        public static void Export(Mat matPoints, Scalar scalar, string outputFileName)
+        {
+            var points = matPoints.AsPoint3fs();
+            Export(points, scalar, outputFileName);
         }
     }
 }

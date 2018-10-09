@@ -1,5 +1,6 @@
 ﻿using KinectX.Data;
 using KinectX.Registration;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace KinectX.Extensions
         public static List<Marker> FindAruco(this CvColor cvColor)
         {
             return Vision.FindAruco(cvColor);
+        }
+
+        public static Mat DrawAruco(this CvColor cvColor)
+        {
+           return Vision.DrawAruco(cvColor);
         }
     }
 }
