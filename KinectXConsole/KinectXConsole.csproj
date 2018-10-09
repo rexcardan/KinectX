@@ -115,9 +115,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Kinect20.Fusion.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="Kinect20.Fusion.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

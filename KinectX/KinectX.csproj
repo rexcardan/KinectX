@@ -197,9 +197,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Kinect20.Fusion.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="Kinect20.Fusion.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="KSUtil.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
