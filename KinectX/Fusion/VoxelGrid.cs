@@ -21,7 +21,15 @@ namespace KinectX.Fusion
 
         public Mat GetSlice(int z)
         {
-            var sliceVoxels = new byte[XResolution * YResolution];
+            //the higher 8 bit in this short is distance
+            //f(d) = 255 - 256 * d / (2 * T)(where d > 0)
+            //- 256 * d / (2 * T)(where d < 0)
+            //T is the half width of TSDF truncation band, approximate 10 voxels
+            //so when crossing the surface, f(d) will jump from 0 to 255
+            //the lower 8 bit in this short is weight, from 0~255
+            //distance, weight(d, w) pairs stored at each voxel, and it fall into three categories:
+            //uninitialized: d = 128(0x80), w = 0; empty: d = 128; w > 0; in-band: 0 < d < 255, d != 128; w > 0
+            var sliceVoxels = new short[XResolution * YResolution];
             for (int x = 0; x < XResolution; x++)
             {
                 for (int y = 0; y < YResolution; y++)
@@ -30,13 +38,16 @@ namespace KinectX.Fusion
                     var slice = YResolution * pitch;
                     var _3dindex = z * slice + y * pitch + x;
                     var _2dindex = y * pitch + x;
-                    var value = Math.Abs((float)Voxels[_3dindex]);
-                    var byteValue = (byte)(value / 32768.0 * 255);
-                    sliceVoxels[_2dindex] = byteValue;
+                    var split = BitConverter.GetBytes(Voxels[_3dindex]);
+                    var distance = split[1];
+                    var weight = split[0];
+                    short value = (short)((distance * -1024 / 128.0) + 1024);
+                    if (distance < 1) { value = 2000; }
+                    sliceVoxels[_2dindex] = value;
                 }
             }
 
-            var mat = new Mat(YResolution, XResolution, MatType.CV_8UC1, sliceVoxels);
+            var mat = new Mat(YResolution, XResolution, MatType.CV_16UC1, sliceVoxels);
             return mat;
         }
     }
