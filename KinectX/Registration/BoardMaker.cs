@@ -10,7 +10,7 @@ namespace KinectX.Registration
     /// </summary>
     public class BoardMaker
     {
-        public static void BuildRegistrationCube(string path, int mmWidth = 104)
+        public static void BuildRegistrationCube(string path, double cmWidth = 10.4)
         {
             var dir = Path.GetDirectoryName(path);
             var sides = new Dictionary<string, int>() //side, starting index id
@@ -23,15 +23,16 @@ namespace KinectX.Registration
                 { "Side6", 20},
             };
 
-            var pixelsPerCM = 300 / 2.54; 
+            var pixelsPerCM = 300 / 2.54;
 
             //2 SQUARES WIDE, 2 SQUARES HIGH, 150 margin on width,
             //100 margin on height
-            var paperPxWidth = pixelsPerCM* 10.4; //11in - 1in margin *300px/in
-            var paperPxHeight = pixelsPerCM * 10.4; //17in - 1in margin *300px/in
-            var markerPxWidth = (int)(pixelsPerCM * 4.5);
-            var marginWidth = (int)(pixelsPerCM * 0.5);
-            var marginHeight = (int)(pixelsPerCM * 0.5);
+            var paperPxWidth = pixelsPerCM * cmWidth; //11in - 1in margin *300px/in
+            var paperPxHeight = pixelsPerCM * cmWidth; //17in - 1in margin *300px/in
+            var markerPxWidth = (int)(pixelsPerCM * 4.5 / 10.4 * cmWidth);
+            var marginWidth = (int)((paperPxWidth - 2.0 * markerPxWidth) / 4);
+            var verify = 2 * markerPxWidth + 4 * marginWidth;
+            var marginHeight = marginWidth;
             var rows = 2;
             var columns = 2;
             var buffer = 0;
@@ -45,11 +46,11 @@ namespace KinectX.Registration
                 {
                     for (var y = 0; y < rows; y++)
                     {
-                        roi.Top = y * markerPxWidth + marginHeight * (y + 1) + buffer;
+                        roi.Top = y * markerPxWidth + marginHeight * (y * 2 + 1);
 
                         for (var x = 0; x < columns; x++)
                         {
-                            roi.Left = x * markerPxWidth + marginWidth * (x + 1) + buffer;
+                            roi.Left = x * markerPxWidth + marginWidth * (x * 2 + 1);
 
                             using (var roiMat = new Mat(outputImage, roi))
                             using (var markerImage = new Mat())
@@ -61,6 +62,14 @@ namespace KinectX.Registration
                         }
                     }
 
+                    var crossHairWidth = 1 * pixelsPerCM; // 1 cm
+                    var crossHairColor = new Scalar(25, 25, 25);
+                    Cv2.Line(outputImage, new Point((float)paperPxWidth / 2, (float)paperPxHeight / 2), new Point((float)paperPxWidth / 2, (float)(paperPxHeight / 2 - crossHairWidth)), crossHairColor);
+                    Cv2.Line(outputImage, new Point((float)paperPxWidth / 2, (float)paperPxHeight / 2), new Point((float)paperPxWidth / 2, (float)(paperPxHeight / 2 + crossHairWidth)), crossHairColor);
+                    Cv2.Line(outputImage, new Point((float)paperPxWidth / 2, (float)paperPxHeight / 2), new Point((float)(paperPxWidth / 2 - crossHairWidth), (float)(paperPxHeight / 2)), crossHairColor);
+                    Cv2.Line(outputImage, new Point((float)paperPxWidth / 2, (float)paperPxHeight / 2), new Point((float)(paperPxWidth / 2 + crossHairWidth), (float)(paperPxHeight / 2)), crossHairColor);
+
+                    Cv2.PutText(outputImage, side.Key, new Point((float)paperPxWidth / 2 - marginWidth/1.3, (float)paperPxHeight), HersheyFonts.HersheyPlain, 1.5/10.4*cmWidth, new Scalar(25, 25, 25), 1);
                     path = Path.Combine(dir, side.Key + ".png");
                     Cv2.ImWrite(path, outputImage);
                 }
