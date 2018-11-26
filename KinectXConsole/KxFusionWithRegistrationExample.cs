@@ -14,7 +14,7 @@ namespace KinectXConsole
         public static void Run(string[] args)
         {
             //Create a defined registration pattern - in this case a cube
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
 
             //Find registration
             var xef = new Xef(@"../../../Resources/cube.xef");

@@ -17,6 +17,9 @@ namespace KinectX.Network.Interfaces
     public interface KxServer
     {
 
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/IsCameraAvailable", ReplyAction = "http://tempuri.org/KxServer/IsCameraAvailableResponse")]
+        bool IsCameraAvailable();
+
         [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/KxServer/LatestDepthImage", ReplyAction = "http://tempuri.org/KxServer/LatestDepthImageResponse")]
         ushort[] LatestDepthImage();
 

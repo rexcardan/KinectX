@@ -58,12 +58,81 @@ namespace KinectX.Registration
         }
 
 
-        public static CoordinateDefinition Cube()
+        public static CoordinateDefinition Microcube()
         {
             var cubeDepth = 0.052f;
             var markerFar = 0.0475f;
             var markerClose = 0.0025f;
             var width = 0.045f;
+
+            var bd = new CoordinateDefinition();
+            //Side 1 (1,2,3,4) - Proximal Cube Face
+            bd.Add(0, new Point3f(-markerFar, -markerFar, -cubeDepth),
+                width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(1, new Point3f(markerClose, -markerFar, -cubeDepth),
+               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(2, new Point3f(-markerFar, markerClose, -cubeDepth),
+               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(3, new Point3f(markerClose, markerClose, -cubeDepth),
+               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
+
+            //Side 2 (4,5,6,7) - Right Cube Face
+            bd.Add(4, new Point3f(cubeDepth, -markerFar, -markerFar),
+                width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
+            bd.Add(5, new Point3f(cubeDepth, -markerFar, markerClose),
+               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
+            bd.Add(6, new Point3f(cubeDepth, markerClose, -markerFar),
+               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
+            bd.Add(7, new Point3f(cubeDepth, markerClose, markerClose),
+               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
+
+            //Side 3 (8,9,10,11) - Distal Cube Face
+            bd.Add(8, new Point3f(markerFar, -markerFar, cubeDepth),
+                 width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(9, new Point3f(-markerClose, -markerFar, cubeDepth),
+               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(10, new Point3f(markerFar, markerClose, cubeDepth),
+               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
+            bd.Add(11, new Point3f(-markerClose, markerClose, cubeDepth),
+               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
+
+            //Side 4 (12,13,14,15) - Left Cube Face
+            bd.Add(12, new Point3f(-cubeDepth, -markerFar, markerFar),
+                width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
+            bd.Add(13, new Point3f(-cubeDepth, -markerFar, -markerClose),
+               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
+            bd.Add(14, new Point3f(-cubeDepth, markerClose, markerFar),
+               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
+            bd.Add(15, new Point3f(-cubeDepth, markerClose, -markerClose),
+               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
+
+            //Side 5  - Top Cube Face
+            bd.Add(16, new Point3f(-markerFar, -cubeDepth, markerFar),
+                width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
+            bd.Add(17, new Point3f(markerClose, -cubeDepth, markerFar),
+               width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
+            bd.Add(18, new Point3f(-markerFar, -cubeDepth, markerClose),
+              width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
+            bd.Add(19, new Point3f(markerClose, -cubeDepth, markerClose),
+              width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
+
+            return bd;
+        }
+
+        public static CoordinateDefinition Cube(double cubeDepthCM, double squareWidthCM)
+        {
+            var pixelsPerCM = 300 / 2.54;
+            var cmWidth = squareWidthCM * 10.4 / 4.5;
+            var paperPxWidth = pixelsPerCM * cmWidth; //11in - 1in margin *300px/in 
+            var paperPxHeight = pixelsPerCM * cmWidth; //17in - 1in margin *300px/in
+            var markerPxWidth = (int)(pixelsPerCM * 4.5 / 10.4 * cmWidth);
+            var marginWidthPx = (int)((paperPxWidth - 2.0 * markerPxWidth) / 4);
+            var marginHeight = marginWidthPx;
+
+            var markerFar = (float)((markerPxWidth + marginWidthPx)/pixelsPerCM);
+            var markerClose = (float)(markerPxWidth/pixelsPerCM);
+            float cubeDepth = (float)cubeDepthCM / 2.0f;
+            var width = (float)squareWidthCM;
 
             var bd = new CoordinateDefinition();
             //Side 1 (1,2,3,4) - Proximal Cube Face

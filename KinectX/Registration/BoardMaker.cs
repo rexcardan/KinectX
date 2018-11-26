@@ -12,6 +12,8 @@ namespace KinectX.Registration
     {
         public static void BuildRegistrationCube(string path, double cmWidth = 10.4)
         {
+            var definition = CoordinateDefinition.Cube(11*2.5, cmWidth);
+
             var dir = Path.GetDirectoryName(path);
             var sides = new Dictionary<string, int>() //side, starting index id
             {
@@ -31,11 +33,9 @@ namespace KinectX.Registration
             var paperPxHeight = pixelsPerCM * cmWidth; //17in - 1in margin *300px/in
             var markerPxWidth = (int)(pixelsPerCM * 4.5 / 10.4 * cmWidth);
             var marginWidth = (int)((paperPxWidth - 2.0 * markerPxWidth) / 4);
-            var verify = 2 * markerPxWidth + 4 * marginWidth;
             var marginHeight = marginWidth;
             var rows = 2;
             var columns = 2;
-            var buffer = 0;
 
             var id = 0;
 

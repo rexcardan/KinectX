@@ -77,6 +77,22 @@ namespace KinectX.Network
             return KxBuffer.instance.lastColorGain;
         }
 
+        [OperationContract]
+        public bool IsCameraAvailable()
+        {
+            _logger.Info("Checking camera availability...");
+            try
+            {
+                var available = KinectSensor.GetDefault().IsAvailable;
+                return available;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+            }
+
+            return false;
+        }
 
         [OperationContract]
         public ushort[] LatestDepthImage()
@@ -110,7 +126,7 @@ namespace KinectX.Network
         public byte[] FusionCameraPose()
         {
             //Create a defined registration pattern - in this case a cube
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
             var yu2 = LatestYUVImage();
             var colorCv = new CvColor(yu2);
             //Find and draw (make sure it can be found)
@@ -132,7 +148,7 @@ namespace KinectX.Network
         public byte[] CameraPose()
         {
             //Create a defined registration pattern - in this case a cube
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
             var yu2 = LatestYUVImage();
             var colorCv = new CvColor(yu2);
             //Find and draw (make sure it can be found)

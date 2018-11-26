@@ -31,6 +31,12 @@ namespace KinectX.Network
         {
         }
 
+        public bool IsCameraAvailable()
+        {
+            return base.Channel.IsCameraAvailable();
+        }
+
+
         public ushort[] LatestDepthImage()
         {
             return base.Channel.LatestDepthImage();

@@ -11,7 +11,7 @@ namespace KinectX.Registration
         public static (KxTransform Transform, List<Marker> Markers) Calibrate(CvColor cvColor, CvCameraSpace cs)
         {
             //Define Board
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
             //Look for Board
             var markers = Vision.FindAruco(cvColor);
             if (!markers.Any()) { throw new Exception("No calibration pattern could be found in the image!"); }

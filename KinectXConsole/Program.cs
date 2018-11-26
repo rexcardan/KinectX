@@ -19,6 +19,7 @@ namespace KinectXConsole
     {
         static void Main(string[] args)
         {
+            RemoteKinectXEFExample.Run(null);
             RGBPointCloudExampleWithMarkerHightlights.Run(null);
             MulticameraFusionExample.Run(null);
 
@@ -26,7 +27,7 @@ namespace KinectXConsole
             var xef = new Xef(xefPath);
             //Load computer vision (CV) color file
             var colorCV = xef.LoadCvColorFrame(0);
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
 
             var markers = colorCV.FindAruco();
             var colorBytes = colorCV.GetBRGABytes();

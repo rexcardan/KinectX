@@ -21,7 +21,7 @@ namespace KinectXConsole
             int NUM_SCANS_PER_CAMERA = 20;
 
             //Create a defined registration pattern - in this case a cube
-            var cube = CoordinateDefinition.Cube();
+            var cube = CoordinateDefinition.Microcube();
 
             var scans = new Dictionary<string, string>()
             {
