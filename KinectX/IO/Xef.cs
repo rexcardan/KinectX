@@ -259,8 +259,9 @@ namespace KinectX.IO
             _logger.Log(LogLevel.Info, $"Requested xef recording - {duration.TotalMilliseconds} ms.");
             var info = new ProcessStartInfo();
             current = Path.Combine(current, "KSUtil.exe");
-            var args = $"-record {path} {duration.TotalSeconds} -stream depth ir color";
+            var args = $"-record \"{path}\" {duration.TotalSeconds} -stream depth ir color";
             var ts = TaskService.Instance;
+            _logger.Log(LogLevel.Info, $"{current} {args}");
             ts.Execute(current).WithArguments(args).Once().AsTask("KxRecordTask").Run();
             ts.RootFolder.DeleteTask("KxRecordTask",true);
         }
