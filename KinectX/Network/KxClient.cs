@@ -12,6 +12,11 @@ namespace KinectX.Network
             var binding = new NetTcpBinding();
             binding.MaxReceivedMessageSize = 2147483647;
             binding.Security.Mode = SecurityMode.None;
+            binding.SendTimeout = new TimeSpan(0, 10, 0);
+            binding.OpenTimeout = new TimeSpan(0, 10, 0);
+            binding.CloseTimeout = new TimeSpan(0, 10, 0);
+            binding.ReceiveTimeout = new TimeSpan(0, 10, 0);
+
             var client = new KxClient(binding, address);
             try
             {
