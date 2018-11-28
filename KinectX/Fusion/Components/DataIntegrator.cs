@@ -54,7 +54,7 @@ namespace KinectX.Fusion.Components
                 {
                     _logger.Trace("Smoothing depth frame...");
                     var dff = engine.DepthProcessor.DepthToDepthFloatFrame(depth);
-                    engine.DepthProcessor.SmoothDepthFloatFrame(dff);
+                    dff = engine.DepthProcessor.SmoothDepthFloatFrame(dff);
                     engine.DepthProcessor.DepthFloatFrame = dff;
                 }
 
@@ -113,7 +113,7 @@ namespace KinectX.Fusion.Components
                 {
                     _logger.Trace("Smoothing depth frame...");
                     var dff = engine.DepthProcessor.DepthToDepthFloatFrame(depth);
-                    engine.DepthProcessor.SmoothDepthFloatFrame(dff);
+                    dff = engine.DepthProcessor.SmoothDepthFloatFrame(dff);
                     engine.DepthProcessor.DepthFloatFrame = dff;
                 }
 

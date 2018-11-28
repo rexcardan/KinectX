@@ -84,8 +84,10 @@ namespace KinectX.Registration
                 MatOfFloat tx = null;
                 var lastDelta = float.MinValue;
                 double lastStd = float.MinValue;
+
                 foreach (var m in ordered)
                 {
+                    //ADD CENTER
                     var realPos = def.CenterDefinitions[m.Id];
                     if (!float.IsInfinity(m.KxCenter.X))
                     {
@@ -95,33 +97,69 @@ namespace KinectX.Registration
                         destPts.Add(realPos);
                         _logger.Info($"Adding point {m.Id} : {m.KxCenter} =>");
                         _logger.Info($"{realPos}");
+                    }
 
-                        if (sourcePts.Total() >= 3)
+                    //ADD CORNERS
+                    for (int p = 0; p < m.Points.Length; p++)
+                    {
+                        var corn = m.Points[p];
+                        var kxCornerPosition = MarkerProcessor.FindLocation(corn, cvcs);
+                        if (!float.IsInfinity(kxCornerPosition.X))
                         {
-                            _logger.Info($"Using {sourcePts.Count} markers to find pose...");
-                            var newTx = Transform.TransformBetween(sourcePts, destPts);
-                            var deltas = ValidatePose(newTx, def, markers);
-                            var avgDelta = deltas.Average();
-                            var std = deltas.StdDev();
+                            //Source is Kinect position
+                            sourcePts.Add(kxCornerPosition);
+                            //Destination is actual physical location
+                            destPts.Add(def.CornerDefinitions[m.Id][p]);
+                            _logger.Info($"Adding point {m.Id} : {kxCornerPosition} =>");
+                            _logger.Info($"{def.CornerDefinitions[m.Id][p]}");
 
-                            //If it is better update
-                            if (tx == null || Math.Abs(avgDelta) < Math.Abs(lastDelta))
+                            if (sourcePts.Total() >= 3)
                             {
-                                lastDelta = avgDelta;
-                                lastStd = std;
-                                tx = newTx;
+                                _logger.Info($"Using {sourcePts.Count} markers to find pose...");
+                                var newTx = Transform.TransformBetween(sourcePts, destPts);
+                                var deltas = ValidatePose(newTx, def, markers);
+                                var avgDelta = deltas.Average();
+                                var std = deltas.StdDev();
+
+                                //If it is better update
+                                if (tx == null || Math.Abs(avgDelta) < Math.Abs(lastDelta))
+                                {
+                                    lastDelta = avgDelta;
+                                    lastStd = std;
+                                    tx = newTx;
+                                }
+                                else
+                                {
+                                    break;
+                                }
                             }
-                            else
-                            {
-                                break;
-                            }
+                        }
+                    }
+
+                    if (sourcePts.Total() >= 15)
+                    {
+                        _logger.Info($"Using {sourcePts.Count} markers to find pose...");
+                        var newTx = Transform.TransformBetween(sourcePts, destPts);
+                        var deltas = ValidatePose(newTx, def, markers);
+                        var avgDelta = deltas.Average();
+                        var std = deltas.StdDev();
+
+                        //If it is better update
+                        if (tx == null || Math.Abs(avgDelta) < Math.Abs(lastDelta))
+                        {
+                            lastDelta = avgDelta;
+                            lastStd = std;
+                            tx = newTx;
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
 
                 _logger.Info($"Pose calculated with average delta of : ");
                 _logger.Info($"{(lastDelta * 1000).ToString("N3")} ± {(lastStd * 1000).ToString("N3")} mm");
-
 
 
                 //Need to flip Z to get into DICOM coordinates
