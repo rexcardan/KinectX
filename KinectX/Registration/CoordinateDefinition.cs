@@ -28,7 +28,7 @@ namespace KinectX.Registration
         /// <returns></returns>
         public bool ContainsCode(int code)
         {
-            return CornerDefinitions.ContainsKey(code);
+            return CenterDefinitions.ContainsKey(code);
         }
 
         /// <summary>
@@ -67,55 +67,34 @@ namespace KinectX.Registration
 
             var bd = new CoordinateDefinition();
             //Side 1 (1,2,3,4) - Proximal Cube Face
-            bd.Add(0, new Point3f(-markerFar, -markerFar, -cubeDepth),
-                width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(1, new Point3f(markerClose, -markerFar, -cubeDepth),
-               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(2, new Point3f(-markerFar, markerClose, -cubeDepth),
-               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(3, new Point3f(markerClose, markerClose, -cubeDepth),
-               width, new Point3f(1, 0, 0), new Point3f(0, 1, 0));
+            bd.CenterDefinitions.Add(0, new Point3f(0.025f, 0.025f, -cubeDepth));
+            bd.CenterDefinitions.Add(1, new Point3f(-0.025f, 0.025f, -cubeDepth));
+            bd.CenterDefinitions.Add(2, new Point3f(0.025f, -0.025f, -cubeDepth));
+            bd.CenterDefinitions.Add(3, new Point3f(-0.025f, -0.025f, -cubeDepth));
 
             //Side 2 (4,5,6,7) - Right Cube Face
-            bd.Add(4, new Point3f(cubeDepth, -markerFar, -markerFar),
-                width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
-            bd.Add(5, new Point3f(cubeDepth, -markerFar, markerClose),
-               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
-            bd.Add(6, new Point3f(cubeDepth, markerClose, -markerFar),
-               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
-            bd.Add(7, new Point3f(cubeDepth, markerClose, markerClose),
-               width, new Point3f(0, 0, 1), new Point3f(0, 1, 0));
+            bd.CenterDefinitions.Add(4, new Point3f(-cubeDepth, 0.025f, -0.025f));
+            bd.CenterDefinitions.Add(5, new Point3f(-cubeDepth, 0.025f, 0.025f));
+            bd.CenterDefinitions.Add(6, new Point3f(-cubeDepth, -0.025f, -0.025f));
+            bd.CenterDefinitions.Add(7, new Point3f(-cubeDepth, -0.025f, 0.025f));
 
             //Side 3 (8,9,10,11) - Distal Cube Face
-            bd.Add(8, new Point3f(markerFar, -markerFar, cubeDepth),
-                 width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(9, new Point3f(-markerClose, -markerFar, cubeDepth),
-               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(10, new Point3f(markerFar, markerClose, cubeDepth),
-               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
-            bd.Add(11, new Point3f(-markerClose, markerClose, cubeDepth),
-               width, new Point3f(-1, 0, 0), new Point3f(0, 1, 0));
+            bd.CenterDefinitions.Add(8, new Point3f(-0.025f, 0.025f, cubeDepth));
+            bd.CenterDefinitions.Add(9, new Point3f(0.025f, 0.025f, cubeDepth));
+            bd.CenterDefinitions.Add(10, new Point3f(-0.025f, -0.025f, cubeDepth));
+            bd.CenterDefinitions.Add(11, new Point3f(0.025f, -0.025f, cubeDepth));
 
             //Side 4 (12,13,14,15) - Left Cube Face
-            bd.Add(12, new Point3f(-cubeDepth, -markerFar, markerFar),
-                width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
-            bd.Add(13, new Point3f(-cubeDepth, -markerFar, -markerClose),
-               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
-            bd.Add(14, new Point3f(-cubeDepth, markerClose, markerFar),
-               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
-            bd.Add(15, new Point3f(-cubeDepth, markerClose, -markerClose),
-               width, new Point3f(0, 0, -1), new Point3f(0, 1, 0));
+            bd.CenterDefinitions.Add(12, new Point3f(cubeDepth, 0.025f, 0.025f));
+            bd.CenterDefinitions.Add(13, new Point3f(cubeDepth, 0.025f, -0.025f));
+            bd.CenterDefinitions.Add(14, new Point3f(cubeDepth, -0.025f, 0.025f));
+            bd.CenterDefinitions.Add(15, new Point3f(cubeDepth, -0.025f, -0.025f));
 
             //Side 5  - Top Cube Face
-            bd.Add(16, new Point3f(-markerFar, -cubeDepth, markerFar),
-                width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
-            bd.Add(17, new Point3f(markerClose, -cubeDepth, markerFar),
-               width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
-            bd.Add(18, new Point3f(-markerFar, -cubeDepth, markerClose),
-              width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
-            bd.Add(19, new Point3f(markerClose, -cubeDepth, markerClose),
-              width, new Point3f(1, 0, 0), new Point3f(0, 0, -1));
-
+            bd.CenterDefinitions.Add(16, new Point3f(0.025f, cubeDepth, 0.025f));
+            bd.CenterDefinitions.Add(17, new Point3f(-0.025f, cubeDepth, 0.025f));
+            bd.CenterDefinitions.Add(18, new Point3f(0.025f, cubeDepth, -0.025f));
+            bd.CenterDefinitions.Add(19, new Point3f(-0.025f, cubeDepth, -0.025f));
             return bd;
         }
 
@@ -129,8 +108,8 @@ namespace KinectX.Registration
             var marginWidthPx = (int)((paperPxWidth - 2.0 * markerPxWidth) / 4);
             var marginHeight = marginWidthPx;
 
-            var markerFar = (float)((markerPxWidth + marginWidthPx)/pixelsPerCM);
-            var markerClose = (float)(markerPxWidth/pixelsPerCM);
+            var markerFar = (float)((markerPxWidth + marginWidthPx) / pixelsPerCM);
+            var markerClose = (float)(markerPxWidth / pixelsPerCM);
             float cubeDepth = (float)cubeDepthCM / 2.0f;
             var width = (float)squareWidthCM;
 

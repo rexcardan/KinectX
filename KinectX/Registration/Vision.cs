@@ -81,33 +81,57 @@ namespace KinectX.Registration
 
                 //Todo: Take N best markers (highest mask sum means better 3d data)
                 var ordered = markers.OrderByDescending(m => m.MaskSum.Val0).ToList();
-                ordered.ForEach(m =>
+                MatOfFloat tx = null;
+                var lastDelta = float.MinValue;
+                double lastStd = float.MinValue;
+                foreach (var m in ordered)
                 {
                     var realPos = def.CenterDefinitions[m.Id];
-                    //Source is Kinect position
-                    sourcePts.Add(m.KxCenter);
-                    //Destination is actual physical location
-                    destPts.Add(realPos);
-                });
+                    if (!float.IsInfinity(m.KxCenter.X))
+                    {
+                        //Source is Kinect position
+                        sourcePts.Add(m.KxCenter);
+                        //Destination is actual physical location
+                        destPts.Add(realPos);
+                        _logger.Info($"Adding point {m.Id} : {m.KxCenter} =>");
+                        _logger.Info($"{realPos}");
 
-                _logger.Info($"Using {sourcePts.Count} markers to find pose...");
+                        if (sourcePts.Total() >= 3)
+                        {
+                            _logger.Info($"Using {sourcePts.Count} markers to find pose...");
+                            var newTx = Transform.TransformBetween(sourcePts, destPts);
+                            var deltas = ValidatePose(newTx, def, markers);
+                            var avgDelta = deltas.Average();
+                            var std = deltas.StdDev();
+
+                            //If it is better update
+                            if (tx == null || Math.Abs(avgDelta) < Math.Abs(lastDelta))
+                            {
+                                lastDelta = avgDelta;
+                                lastStd = std;
+                                tx = newTx;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                _logger.Info($"Pose calculated with average delta of : ");
+                _logger.Info($"{(lastDelta * 1000).ToString("N3")} ± {(lastStd * 1000).ToString("N3")} mm");
+
+
 
                 //Need to flip Z to get into DICOM coordinates
                 if (!sourcePts.Any() || !destPts.Any())
                 {
                     throw new Exception("No points to transform!");
                 }
-                var txArray = new float[4, 4];
-                var tx = Transform.TransformBetween(sourcePts, destPts);
+
                 var kxTx = new KxTransform(tx.To2DArray());
 
-                //Validate Pose
-                //Validate that the transforms are valid...Low average and low STD desired
-                var deltas = ValidatePose(tx, def, markers);
-                var avgDelta = deltas.Average();
-                var std = deltas.StdDev();
-                _logger.Info($"Pose calculated with average delta of : ");
-                _logger.Info($"{(avgDelta * 1000).ToString("N3")} ± {(std * 1000).ToString("N3")} mm");
                 return kxTx;
             }
             throw new ArgumentException("Markers cannot be null.");
@@ -148,7 +172,8 @@ namespace KinectX.Registration
                     var kPos = m.KxCenter;
                     var ptTx = pose.TransformPoint3f(kPos);
                     var delta = (ptTx - realPos).Magnitude();
-                    deltas.Add(delta);
+                    if (!float.IsNaN(delta))
+                        deltas.Add(delta);
 
                 }
             });
